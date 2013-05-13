@@ -30,24 +30,28 @@ def initialiseBoard():
 def drawBoard(b):
     rows = len(b)
     cols = len(b[0])
+    gridCols = cols * 2
     
-    drawGrid(rows, cols * 2)
+    drawGrid(rows, gridCols)
 
+    print("Drawing pieces")
+    print("DrawBoard() %d, %d" % (rows, cols))
+    
     for r in range(rows):
         for c in range(cols):
             piece = b[r][c]
-            c = c * 2 - 2
+            c = c * 2
             if r % 2 != 0:
                 c += 1
 
             if piece == -2:
-                drawPiece(rows, cols, r, c, "white", True)
+                drawPiece(rows, gridCols, r, c, "white", True)
             elif piece == -1:
-                drawPiece(rows, cols, r, c, "white", False)
+                drawPiece(rows, gridCols, r, c, "white", False)
             elif piece == 1:
-                drawPiece(rows, cols, r, c, "black", False)
+                drawPiece(rows, gridCols, r, c, "black", False)
             elif piece == 2:
-                drawPiece(rows, cols, r, c, "black", True)
+                drawPiece(rows, gridCols, r, c, "black", True)
             elif piece == 0:
                 continue
             else:
@@ -78,8 +82,11 @@ def drawRectangle(x, y, w, h, innerColor, fill, borderColor):
         
     t.end_fill()
 
-# This is to used to redraw single cells when making moves
+# Draw a single cell
+# Note: Rows and cols are the grid dimenions, not the board dimensions
 def drawCell(rows, cols, r, c, color):
+    #print("DrawCell() %d, %d" % (rows, cols))
+    
     squareWidth = 60
     startX = 0 - (cols * squareWidth) / 2
     startY = 0 - (rows * squareWidth) / 2
@@ -89,14 +96,18 @@ def drawCell(rows, cols, r, c, color):
 
     drawRectangle(x, y, squareWidth, squareWidth, color, True, "black")
 
+# Draws the checkerboard grid
+# Note: Rows and cols are the grid dimenions, not the board dimensions
 def drawGrid(rows, cols):
+    #print("DrawGrid() %d, %d" % (rows, cols))
+    
     squareWidth = 60
     startX = 0 - (cols * squareWidth) / 2
     startY = 0 - (rows * squareWidth) / 2
     
     for r in range(rows):
         for c in range(cols):
-            x = startX +c * squareWidth
+            x = startX + c * squareWidth
             y = startY + r * squareWidth
             if (r + c) % 2 == 0:
                 #drawRectangle(x, y, squareWidth, squareWidth, "black", False)
@@ -125,6 +136,8 @@ def drawCircle(x, y, r, innerColor, fill, borderColor):
     t.end_fill()
     
 def drawPiece(rows, cols, r, c, color, king):
+    print("DrawPiece() %d, %d, %d, %d" % (rows, cols, r, c))
+    
     squareWidth = 60
     startX = 0 - (cols * squareWidth) / 2
     startY = 0 - (rows * squareWidth) / 2
@@ -135,6 +148,9 @@ def drawPiece(rows, cols, r, c, color, king):
 
     x = startX + c * squareWidth + squareWidth / 2
     y = startY + r * squareWidth + radius / 2
+    
+    print("DrawPiece() drawing: x: %d, y: %d" % (x, y))
+    
     if color == "white":
         drawCircle(x, y, radius, "white", True, "black")
     else:
@@ -211,6 +227,7 @@ def moves(b, c):
 def move(b, m):
     rows = len(b)
     cols = len(b[0])
+    gridCols = cols * 2
 
     # Check if capture
     isCapture = False
@@ -248,11 +265,12 @@ def move(b, m):
     b[m[1]][m[0]] = 0
 
     # Redraw new moves
-    drawCell(rows, cols, m[1], m[0], "white")
-    drawPiece(rows, cols, m[3], m[2], color, king)
+    print("Redrawing new moves")
+    drawCell(rows, gridCols, m[1], m[0], "white")
+    drawPiece(rows, gridCols, m[3], m[2], color, king)
 
     if isCapture:
-        drawCell(rows, cols, captured[1], captured[0], "white")
+        drawCell(rows, gridCols, captured[1], captured[0], "white")
 
     return b
 
@@ -269,6 +287,8 @@ def main():
     t = (0, 0, 1, 1, 2, 2)
     b = move(b, t)
     print(b)
+
+    drawCircle(0, 0, 10, "blue", True, "blue")
 
 # Advanced, general functions below
 #def recursiveCaptures(b, c):
