@@ -31,7 +31,7 @@ def drawBoard(b):
     rows = len(b)
     cols = len(b[0])
     
-    drawGrid(rows, cols * 2)
+    #drawGrid(rows, cols * 2)
 
     for r in range(rows):
         for c in range(cols):
@@ -184,18 +184,24 @@ def moves(b, c):
 # This will probably take in x,y values using the 0-3 rather than the 0-7 range
 # If using 0-3 will need to double it
 def move(b, m):
-    # m = (a, b, c, d)
-
     rows = len(b)
     cols = len(b[0])
 
-    if b[m[0]][m[1]] == -2:
+    # Check if capture
+    isCapture = False
+    if len(m) == 6:
+        isCapture = True
+        captured = (m[2], m[3])
+        m = (m[0], m[1], m[4], m[5])
+
+    # Set moving pieces type
+    if b[m[1]][m[0]] == -2:
         color = "white"
         king = True
-    elif b[m[0]][m[1]] == -1:
+    elif b[m[1]][m[0]] == -1:
         color = "white"
         king = False
-    elif b[m[0]][m[1]] == 1:
+    elif b[m[1]][m[0]] == 1:
         color = "black"
         king = False
     else:
@@ -203,19 +209,25 @@ def move(b, m):
         king = True
 
     # Check for piece promotion
-    if m[1] == 0 or m[1] == cols - 1:
+    if m[3] == 0 or m[3] == cols - 1:
         if color == "white":
-            b[m[0]][m[1]] = -2
+            b[m[1]][m[0]] = -2
         else:
-            b[m[0]][m[1]] = 2
+            b[m[1]][m[0]] = 2
 
     # Update board
-    b[m[2]][m[3]] = b[m[0]][m[1]]
-    b[m[0]][m[1]] = 0
+    if isCapture:
+        b[captured[1]][captured[0]] = 0
+        
+    b[m[3]][m[2]] = b[m[1]][m[0]]
+    b[m[1]][m[0]] = 0
 
     # Redraw new moves
     drawCell(rows, cols, m[1], m[0], "white")
     drawPiece(rows, cols, m[3], m[2], color, king)
+
+    if isCapture:
+        drawCell(rows, cols, captured[1], captured[0], "white")
 
     return b
 
