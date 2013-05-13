@@ -31,7 +31,7 @@ def drawBoard(b):
     rows = len(b)
     cols = len(b[0])
     
-    #drawGrid(rows, cols * 2)
+    drawGrid(rows, cols * 2)
 
     for r in range(rows):
         for c in range(cols):
@@ -240,7 +240,8 @@ def main():
     print(b)
     drawBoard(b)
 
-    t = (0, 2, 1, 3)
+    #t = (0, 2, 1, 3)
+    t = (0, 0, 1, 1, 2, 2)
     b = move(b, t)
     print(b)
 
