@@ -148,13 +148,12 @@ def moves(b, c):
 
     for row in range(rows):
         for col in range(cols): 
-            if c == 1:
-                if b[row][col] == 1:
-                    #check piece below
-                    if row != rows-1:
-                        if b[row+1][col] == 0:
+            if c == 1: 
+                if b[row][col] == 1 or b[row][col] == 2:
+                    if row != rows-1: 
+                        if b[row+1][col] == 0: 
                             moves.append((row, col, row+1, col))
-                        if row % 2 == 0:
+                        if row % 2 != 0:
                             if col != cols-1:
                                 if b[row+1][col+1] == 0:
                                     moves.append((row, col, row+1, col+1))
@@ -162,13 +161,11 @@ def moves(b, c):
                             if col != 0:
                                 if b[row+1][col-1] == 0:
                                     moves.append((row, col, row+1, col-1))
-            elif c == -1:
-                if b[row][col] == -1:
-                    #check piece above
+                if b[row][col] == 2:
                     if row != 0:
                         if b[row-1][col] == 0:
                             moves.append((row, col, row-1, col))
-                        if row % 2 == 0:
+                        if row % 2 != 0:
                             if col != cols-1:
                                 if b[row-1][col+1] == 0:
                                     moves.append((row, col, row-1, col+1))
@@ -176,7 +173,31 @@ def moves(b, c):
                             if col != 0:
                                 if b[row-1][col-1] == 0:
                                     moves.append((row, col, row-1, col-1))
-                        
+            elif c == -1:
+                if b[row][col] == -1 or b[row][col] == -2:
+                    if row != 0:
+                        if b[row-1][col] == 0:
+                            moves.append((row, col, row-1, col))
+                        if row % 2 != 0:
+                            if col != cols-1:
+                                if b[row-1][col+1] == 0:
+                                    moves.append((row, col, row-1, col+1))
+                        else:
+                            if col != 0:
+                                if b[row-1][col-1] == 0:
+                                    moves.append((row, col, row-1, col-1))
+                if b[row][col] == -2:
+                    if row != rows-1:
+                        if b[row+1][col] == 0:
+                            moves.append((row, col, row+1, col))
+                        if row % 2 != 0:
+                            if col != cols-1:
+                                if b[row+1][col+1] == 0:
+                                    moves.append((row, col, row+1, col+1))
+                        else:
+                            if col != 0:
+                                if b[row+1][col-1] == 0:
+                                    moves.append((row, col, row+1, col-1))
     return moves
     
     
@@ -238,7 +259,7 @@ def captures(b, c):
 def main():
     b = initialiseBoard()
     print(b)
-    drawBoard(b)
+    # drawBoard(b)
 
     #t = (0, 2, 1, 3)
     t = (0, 0, 1, 1, 2, 2)
