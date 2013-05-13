@@ -5,14 +5,14 @@
 import turtle
 
 def initialiseBoard():
-    defaultBoard = [[-1, -1, -1, -1], \
-                    [-1, -1, -1, -1], \
-                    [-1, -1, -1, -1], \
-                    [0, 0, 0, 0], \
-                    [0, 0, 0, 0], \
+    defaultBoard = [[1, 1, 1, 1], \
                     [1, 1, 1, 1], \
                     [1, 1, 1, 1], \
-                    [1, 1, 1, 1]]
+                    [0, 0, 0, 0], \
+                    [0, 0, 0, 0], \
+                    [-1, -1, -1, -1], \
+                    [-1, -1, -1, -1], \
+                    [-1, -1, -1, -1]]
     
     # Invalid files will result in a default board being used
     filename = str(input("Enter your board file: "))
@@ -58,7 +58,7 @@ def drawBoard(b):
 
 def drawRectangle(x, y, w, h, color, fill):
     t = turtle.Turtle()
-    t.speed("fastest")
+    t.speed(0)
     t.hideturtle()
     t.color(color)
 
@@ -82,9 +82,10 @@ def drawRectangle(x, y, w, h, color, fill):
 
 def drawCircle(x, y, r, color,  fill):
     t = turtle.Turtle()
-    t.speed("fastest")
+    t.speed(0)
     t.hideturtle()
-    t.color(color)
+    t.color("black")
+    t.fillcolor(color)
 
     # Move to x, y cord
     t.penup()
@@ -125,7 +126,6 @@ def drawPiece(rows, cols, r, c, color, king):
     y = startY + r * squareWidth + radius / 2
     if color == "white":
         drawCircle(x, y, radius, "white", True)
-        drawCircle(x, y, radius, "black", False)
     else:
         drawCircle(x, y, radius, "black", True)
 
