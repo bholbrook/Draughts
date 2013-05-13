@@ -28,9 +28,6 @@ def initialiseBoard():
         return defaultBoard
 
 def drawBoard(b):
-    #rows = len(b)
-    #cols = len(b[0])
-
     rows = len(b)
     cols = len(b[0])
     
@@ -79,6 +76,16 @@ def drawRectangle(x, y, w, h, color, fill):
         t.right(90)
         
     t.end_fill()
+
+# This is to used to redraw single cells when making moves
+def drawCell(rows, cols, r, c, color):
+    squareWidth = 60
+    startX = 0 - (cols * squareWidth) / 2
+    startY = 0 - (rows * squareWidth) / 2
+
+    x = startX + c * squareWidth
+    y = startY + r * squareWidth
+    drawRectangle(x, y, squareWidth, squareWidth, color, True)
 
 def drawCircle(x, y, r, color,  fill):
     t = turtle.Turtle()
@@ -136,21 +143,57 @@ def drawPiece(rows, cols, r, c, color, king):
 def moves(b, c):
     moves = []
     
-
+# In  progress
+# This will probably take in x,y values using the 0-3 rather than the 0-7 range
+# If using 0-3 will need to double it
 def move(b, m):
-    print("Not finished")
+    # m = (a, b, c, d)
+
+    rows = len(b)
+    cols = len(b[0])
+
+    if b[m[0]][m[1]] == -2:
+        color = "white"
+        king = True
+    elif b[m[0]][m[1]] == -1:
+        color = "white"
+        king = False
+    elif b[m[0]][m[1]] == 1:
+        color = "black"
+        king = False
+    else:
+        color = "black"
+        king = True
+
+    # Check for piece promotion
+    if m[1] == 0 or m[1] == cols - 1:
+        if color == "white":
+            b[m[0]][m[1]] = -2
+        else:
+            b[m[0]][m[1]] = 2
+
+    # Update board
+    b[m[2]][m[3]] = b[m[0]][m[1]]
+    b[m[0]][m[1]] = 0
+
+    # Redraw new moves
+    drawCell(rows, cols, m[1], m[0], "white")
+    drawPiece(rows, cols, m[3], m[2], color, king)
+
+    return b
 
 def captures(b, c):
-    print("Not finished")
-
-def move(b, m):
     print("Not finished")
 
 # TODO In progress
 def main():
     b = initialiseBoard()
     print(b)
-    drawBoard(b)    
+    drawBoard(b)
+
+    t = (0, 2, 1, 3)
+    b = move(b, t)
+    print(b)
 
 # Advanced, general functions below
 #def recursiveCaptures(b, c):
