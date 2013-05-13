@@ -140,8 +140,45 @@ def drawPiece(rows, cols, r, c, color, king):
         drawCircle(x, y + radius / 2, innerRadius, innerColor, True)
 
 # In progress
-def moves(b, c):
+def moves(b, c): 
     moves = []
+    
+    rows = len(b)
+    cols = len(b[0])
+
+    for row in range(rows):
+        for col in range(cols): 
+            if c == 1:
+                if b[row][col] == 1:
+                    #check piece below
+                    if row != rows-1:
+                        if b[row+1][col] == 0:
+                            moves.append((row, col, row+1, col))
+                        if row % 2 == 0:
+                            if col != cols-1:
+                                if b[row+1][col+1] == 0:
+                                    moves.append((row, col, row+1, col+1))
+                        else:
+                            if col != 0:
+                                if b[row+1][col-1] == 0:
+                                    moves.append((row, col, row+1, col-1))
+            elif c == -1:
+                if b[row][col] == -1:
+                    #check piece above
+                    if row != 0:
+                        if b[row-1][col] == 0:
+                            moves.append((row, col, row-1, col))
+                        if row % 2 == 0:
+                            if col != cols-1:
+                                if b[row-1][col+1] == 0:
+                                    moves.append((row, col, row-1, col+1))
+                        else:
+                            if col != 0:
+                                if b[row-1][col-1] == 0:
+                                    moves.append((row, col, row-1, col-1))
+                        
+    return moves
+    
     
 # In  progress
 # This will probably take in x,y values using the 0-3 rather than the 0-7 range
