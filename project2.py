@@ -259,7 +259,7 @@ def captures(b, c):
 def main():
     b = initialiseBoard()
     print(b)
-    # drawBoard(b)
+    drawBoard(b)
 
     #t = (0, 2, 1, 3)
     t = (0, 0, 1, 1, 2, 2)
