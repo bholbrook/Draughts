@@ -148,32 +148,32 @@ def moves(b, c):
 
     for row in range(rows):
         for col in range(cols): 
-            if c == 1: 
-                if b[row][col] == 1 or b[row][col] == 2:
-                    if row != rows-1: 
-                        if b[row+1][col] == 0: 
+            if c == 1: # if black player
+                if b[row][col] == 1 or b[row][col] == 2: ## detemining moves forward for normal or king pieces
+                    if row != rows-1: # if end row (so can't move down any more)
+                        if b[row+1][col] == 0: # if the destination is empty
                             moves.append((row, col, row+1, col))
-                        if row % 2 != 0:
-                            if col != cols-1:
-                                if b[row+1][col+1] == 0:
+                        if row % 2 != 0: # if the current row is odd numbered
+                            if col != cols-1: # if not at the edge of the board
+                                if b[row+1][col+1] == 0: # then check if destination is empty
                                     moves.append((row, col, row+1, col+1))
-                        else:
-                            if col != 0:
-                                if b[row+1][col-1] == 0:
+                        else: # if the current row is even numbered
+                            if col != 0: # if not at the edge of the board
+                                if b[row+1][col-1] == 0: # checking if the destination is empty
                                     moves.append((row, col, row+1, col-1))
-                if b[row][col] == 2:
-                    if row != 0:
-                        if b[row-1][col] == 0:
+                if b[row][col] == 2: # determining moves back for king piece
+                    if row != 0: # if not at the edge of the board
+                        if b[row-1][col] == 0: # check if move back destination is empty
                             moves.append((row, col, row-1, col))
-                        if row % 2 != 0:
-                            if col != cols-1:
-                                if b[row-1][col+1] == 0:
+                        if row % 2 != 0: # if odd numbered row
+                            if col != cols-1: # check if at the edge of the board
+                                if b[row-1][col+1] == 0: # check if destination is empty
                                     moves.append((row, col, row-1, col+1))
-                        else:
-                            if col != 0:
-                                if b[row-1][col-1] == 0:
+                        else: # if even numbered row
+                            if col != 0: # check for edge of board
+                                if b[row-1][col-1] == 0: # check if destination is empty
                                     moves.append((row, col, row-1, col-1))
-            elif c == -1:
+            elif c == -1: # same below, but for white player moving up
                 if b[row][col] == -1 or b[row][col] == -2:
                     if row != 0:
                         if b[row-1][col] == 0:
