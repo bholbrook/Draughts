@@ -53,11 +53,12 @@ def drawBoard(b):
             else:
                 print("Should never reach here")
 
-def drawRectangle(x, y, w, h, color, fill):
+def drawRectangle(x, y, w, h, innerColor, fill, borderColor):
     t = turtle.Turtle()
     t.speed(0)
     t.hideturtle()
-    t.color(color)
+    t.color(borderColor)
+    t.fillcolor(innerColor)
 
     # Move to x, y cord
     t.penup()
@@ -85,14 +86,31 @@ def drawCell(rows, cols, r, c, color):
 
     x = startX + c * squareWidth
     y = startY + r * squareWidth
-    drawRectangle(x, y, squareWidth, squareWidth, color, True)
 
-def drawCircle(x, y, r, color,  fill):
+    drawRectangle(x, y, squareWidth, squareWidth, color, True, "black")
+
+def drawGrid(rows, cols):
+    squareWidth = 60
+    startX = 0 - (cols * squareWidth) / 2
+    startY = 0 - (rows * squareWidth) / 2
+    
+    for r in range(rows):
+        for c in range(cols):
+            x = startX +c * squareWidth
+            y = startY + r * squareWidth
+            if (r + c) % 2 == 0:
+                #drawRectangle(x, y, squareWidth, squareWidth, "black", False)
+                drawCell(rows, cols, r, c, "white")
+            else:
+                #drawRectangle(x, y, squareWidth, squareWidth, "black", True)
+                drawCell(rows, cols, r, c, "black")
+                
+def drawCircle(x, y, r, innerColor, fill, borderColor):
     t = turtle.Turtle()
     t.speed(0)
     t.hideturtle()
-    t.color("black")
-    t.fillcolor(color)
+    t.color(borderColor)
+    t.fillcolor(innerColor)
 
     # Move to x, y cord
     t.penup()
@@ -105,21 +123,7 @@ def drawCircle(x, y, r, color,  fill):
     t.circle(r)
     
     t.end_fill()
-
-def drawGrid(rows, cols):
-    squareWidth = 60
-    startX = 0 - (cols * squareWidth) / 2
-    startY = 0 - (rows * squareWidth) / 2
     
-    for r in range(rows):
-        for c in range(cols):
-            x = startX +c * squareWidth
-            y = startY + r * squareWidth
-            if (r + c) % 2 == 0:
-                drawRectangle(x, y, squareWidth, squareWidth, "black", False)
-            else:
-                drawRectangle(x, y, squareWidth, squareWidth, "black", True)
-                
 def drawPiece(rows, cols, r, c, color, king):
     squareWidth = 60
     startX = 0 - (cols * squareWidth) / 2
@@ -132,12 +136,12 @@ def drawPiece(rows, cols, r, c, color, king):
     x = startX + c * squareWidth + squareWidth / 2
     y = startY + r * squareWidth + radius / 2
     if color == "white":
-        drawCircle(x, y, radius, "white", True)
+        drawCircle(x, y, radius, "white", True, "black")
     else:
-        drawCircle(x, y, radius, "black", True)
+        drawCircle(x, y, radius, "black", True, "black")
 
     if king:
-        drawCircle(x, y + radius / 2, innerRadius, innerColor, True)
+        drawCircle(x, y + radius / 2, innerRadius, innerColor, True, innerColor)
 
 # In progress
 def moves(b, c): 
