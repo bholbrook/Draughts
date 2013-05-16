@@ -2,6 +2,10 @@
 # Benjamin Holbrook, 20761758
 # George Gooden, 20772597
 
+
+#README
+# We need to make the function params for x,y values consistent so they always take in x then y rather than y then x
+
 import turtle
 
 def initialiseBoard():
@@ -83,9 +87,9 @@ def drawRectangle(x, y, w, h, innerColor, fill, borderColor):
     t.end_fill()
 
 # Draw a single cell
-# Note: Rows and cols are the grid dimenions, not the board dimensions
+# Note: Rows and cols are the grid dimensions, not the board dimensions
 def drawCell(rows, cols, r, c, color):
-    #print("DrawCell() %d, %d" % (rows, cols))
+    print("DrawCell() %d, %d, %d, %d" % (rows, cols, r, c))
     
     squareWidth = 60
     startX = 0 - (cols * squareWidth) / 2
@@ -97,7 +101,7 @@ def drawCell(rows, cols, r, c, color):
     drawRectangle(x, y, squareWidth, squareWidth, color, True, "black")
 
 # Draws the checkerboard grid
-# Note: Rows and cols are the grid dimenions, not the board dimensions
+# Note: Rows and cols are the grid dimensions, not the board dimensions
 def drawGrid(rows, cols):
     #print("DrawGrid() %d, %d" % (rows, cols))
     
@@ -134,9 +138,11 @@ def drawCircle(x, y, r, innerColor, fill, borderColor):
     t.circle(r)
     
     t.end_fill()
-    
+
+# Draw a single piece
+# Note: Rows and cols are the grid dimensions, not the board dimensions
 def drawPiece(rows, cols, r, c, color, king):
-    #print("DrawPiece() %d, %d, %d, %d" % (rows, cols, r, c))
+    print("DrawPiece() %d, %d, %d, %d" % (rows, cols, r, c))
     
     squareWidth = 60
     startX = 0 - (cols * squareWidth) / 2
@@ -229,6 +235,9 @@ def move(b, m):
     cols = len(b[0])
     gridCols = cols * 2
 
+    print("M:")
+    print(m)
+
     # Check if capture
     isCapture = False
     if len(m) == 6:
@@ -237,53 +246,56 @@ def move(b, m):
         m = (m[0], m[1], m[4], m[5])
 
     # Set moving pieces type
-    if b[m[1]][m[0]] == -2:
+    cellValue = b[m[1]][m[0]]
+    if cellValue == -1 or cellValue == -2:
         color = "white"
-        king = True
-    elif b[m[1]][m[0]] == -1:
-        color = "white"
-        king = False
-    elif b[m[1]][m[0]] == 1:
-        color = "black"
-        king = False
+
+        if m[3] == 0:
+            king = True
+        else:
+            king = False
     else:
         color = "black"
-        king = True
 
-    # Check for piece promotion
-    if m[3] == 0 or m[3] == cols - 1:
-        if color == "white":
-            b[m[1]][m[0]] = -2
+        if m[3] == rows - 1:
+            king = True
         else:
-            b[m[1]][m[0]] = 2
+            king = False
 
     # Update board
     if isCapture:
         b[captured[1]][captured[0]] = 0
-        
+
     b[m[3]][m[2]] = b[m[1]][m[0]]
-    b[m[1]][m[0]] = 0
+
+    # Update board if piece promoted
+    if king:
+        b[m[3]][m[2]] *= 2        
+    b[m[1]][m[0]] = 0   
 
     # Redraw new moves
-    print("Redrawing new moves")
-    drawCell(rows, gridCols, m[1], m[0], "white")
-    drawPiece(rows, gridCols, m[3], m[2], color, king)
+    # Needs to be converted from half to full column width
+    if m[1] % 2 == 0:
+        drawCell(rows, gridCols, m[1], m[0] * 2, "white")
+    else :
+        drawCell(rows, gridCols, m[1], m[0] * 2 + 1, "white")
+
+    if m[3] % 2 == 0:
+        drawPiece(rows, gridCols, m[3], m[2] * 2, color, king)
+    else:
+        drawPiece(rows, gridCols, m[3], m[2] * 2 + 1, color, king)
 
     if isCapture:
-        drawCell(rows, gridCols, captured[1], captured[0], "white")
+        if captured[1] % 2 == 0:
+            drawCell(rows, gridCols, captured[1], captured[0] * 2, "white")
+        else:
+            drawCell(rows, gridCols, captured[1], captured[0] * 2 + 1, "white")
 
     return b
 
-# In progress
-# c = 1: black, c = -1: white
-# The large sections are almost identical except that they are checking for opposite colours.
-# Huge potential to improve this
-# This doesn't currently work. Pretty sure it's to do with my -2 indexes when I should be using -1.
-# May just want to extend the moves() function logic and copy it here
 def captures(b, c):
     rows = len(b)
     cols = len(b[0])
-    print("Rows: %d, Cols: %d" % (rows, cols))
 
     captures = []
 
@@ -294,7 +306,7 @@ def captures(b, c):
 
             # Found a white piece
             if c == -1 and (piece == -1 or piece == -2):
-                print("White piece at (%d, %d)" % (row, col))
+                #print("White piece at (%d, %d)" % (row, col))
                 # Height boundary check
                 if row + 2 < rows:
                     #Check board row shift
@@ -303,23 +315,23 @@ def captures(b, c):
                         if col - 1 >= 0 and b[row+2][col-1] == 0:
                             # Jumped piece check
                             if b[row+1][col-1] == 1 or b[row+1][col-1] == 2:
-                                captures.append((row, col, row+1, col-1, row+2, col-1))
+                                captures.append((col, row, col-1, row+1, col-1, row+2))
                         # Right move position check
                         if col + 1 < cols and b[row+2][col+1] == 0:
                             # Jumped piece check
                             if b[row+1][col] == 1 or b[row+1][col] == 2:
-                                captures.append((row, col, row+1, col, row+2, col+1))
+                                captures.append((col, row, col, row+1, col+1, row+2))
                     else:
                         # Left move position check
                         if col - 1 >= 0 and b[row+2][col-1] == 0:
                             # Jumped piece check
                             if b[row+1][col] == 1 or b[row+1][col] == 2:
-                                captures.append((row, col, r+1, col, r+2, col-1))
+                                captures.append((col, row, col, r+1, col-1, r+2))
                         # Right move position check
                         if col + 1 < cols and b[row+2][col+1] == 0:
                             # Jumped piece check
                             if b[row+1][col+1] == 1 or b[row+1][col+1] == 2:
-                                captures.append((row, col, row+1, col+1, row+2, col+1))
+                                captures.append((col, row, col+1, row+1, col+1, row+2))
 
                             
                 # King piece. Check moves below current position
@@ -332,28 +344,28 @@ def captures(b, c):
                             if col - 1 >= 0 and b[row-2][col-1] == 0:
                                 # Jumped piece check
                                 if b[row-1][col-1] == 1 or b[row-1][col-1] == 2:
-                                    captures.append((row, col, row-1, col-1, row-2, col-1))
+                                    captures.append((col, row, col-1, row-1, col-1, row-2))
                             # Right move position check
                             if col + 1 < cols and b[row-2][col+1] == 0:
                                 # Jumped piece check
                                 if b[row-1][col] == 1 or b[row-1][col] == 2:
-                                    captures.append((row, col, row-1, col, row-2, col+1))
+                                    captures.append((col, row, col, row-1, col+1, row-2))
                         else:
                             # Left move position check
                             if col - 1 >= 0 and b[row-2][col-1] == 0:
                                 # Jumped piece check
                                 if b[row-1][col] == 1 or b[row-1][col] == 2:
-                                    captures.append((row, col, row-1, col, row-2, col-1))
+                                    captures.append((col, row, col, row-1, col-1, row-2))
                             # Right move position check
                             if col + 1 < cols and b[row-2][col+1] == 0:
                                 # Jumped piece check
                                 if b[row-1][col+1] == 1 or b[row-1][col+1] == 2:
-                                    captures.append((row, col, row-1, col+1, row-2, col+1))
+                                    captures.append((col, row, col+1, row-1, col+1, row-2))
                 
 
             # Found a black piece
             elif c == 1 and (piece == 1 or piece == 2):
-                print("Black piece at (%d, %d)" % (row, col))
+                #print("Black piece at (%d, %d)" % (row, col))
                 # Height boundary check
                 if row + 2 < rows:
                     #Check board row shift
@@ -362,29 +374,25 @@ def captures(b, c):
                         if col - 1 >= 0 and b[row+2][col-1] == 0:
                             # Jumped piece check
                             if b[row+1][col-1] == -1 or b[row+1][col-1] == -2:
-                                captures.append((row, col, row+1, col-1, row+2, col-1))
+                                captures.append((col, row, col-1, row+1, ol-1, row+2))
                         # Right move position check
                         if col + 1 < cols and b[row+2][col+1] == 0:
                             # Jumped piece check
                             if b[row+1][col] == -1 or b[row+1][col] == -2:
-                                captures.append((row, col, row+1, col, row+2, col+1))
+                                captures.append((col, row, col, row+1, col+1, row+2))
                     else:
                         # Left move position check
                         if col - 1 >= 0 and b[row+2][col-1] == 0:
                             # Jumped piece check
                             if b[row+1][col] == -1 or b[row+1][col] == -2:
-                                captures.append((row, col, row+1, col, row+2, col-1))
+                                captures.append((col, row, col, row+1, col-1, row+2))
                         # Right move position check
                         if col + 1 < cols and b[row+2][col+1] == 0:
                             # Jumped piece check
                             if b[row+1][col+1] == -1 or b[row+1][col+1] == -2:
-                                captures.append((row, col, row+1, col+1, row+2, col+1))
+                                captures.append((col, row, col+1, row+1, col+1, row+2))
                                 
     return captures
-                
-
-
-    
 
 # TODO In progress
 def main():
@@ -397,6 +405,7 @@ def main():
     #b = move(b, t)
     print(b)
 
+    # This section is purely for board "e.txt" and includes a black capture
     print("Black captures")
     bc = captures(b, 1)
     print(bc)
@@ -404,6 +413,10 @@ def main():
     print("White captures")
     wc = captures(b, -1)
     print(wc)
+
+    #move(wc[0])
+    move(b, bc[0])
+    # End black capture section
 
     #drawCircle(0, 0, 10, "blue", True, "blue")
 
