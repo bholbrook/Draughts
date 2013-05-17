@@ -450,13 +450,15 @@ def recursiveCaptures(b, c):
         #caps = captures(b, c)
         #return recursiveCaptures(b, c)
 
-def coordCapture(b, c, x, y, caps):
+def coordCapture(b, c, x, y, cs):
+
     initCaps = captures(b, c)
 
-    finalCaps = []
-    tempRow = []
+    nextCoords = []
     for cap in initCaps:
-        tempRow.append(cap)
+        tempCaptureList = []
+        if cap[4] == x and cap[5] == y:
+            tempCaptureList.append(cap)
     
 
 def capture(b, ms):
@@ -551,6 +553,12 @@ def isGameOver(b):
         if numWhiteMoves == 0 and numBlackMoves == 0:
             # No more available moves, no victor
             return (True, 0)
+        elif numWhiteMoves == 0:
+            # No available white moves, black victory
+            return (True, 1)
+        elif numBlackMoves == 0:
+            # No available black moves, white victory
+            return (True, -1)
         else:
             # Move can be made, no victor
             return (False, 0)
