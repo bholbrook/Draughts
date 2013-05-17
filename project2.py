@@ -7,6 +7,7 @@
 # We need to make the function params for x,y values consistent so they always take in x then y rather than y then x
 
 import turtle
+import random
 
 def initialiseBoard():
     defaultBoard = [[1, 1, 1, 1], \
@@ -226,21 +227,12 @@ def moves(b, c):
                                     moves.append((row, col, row+1, col-1))
     return moves
     
-    
-# In  progress
-# This will probably take in x,y values using the 0-3 rather than the 0-7 range
-# If using 0-3 will need to double it
 def move(b, m):
     rows = len(b)
     cols = len(b[0])
     gridCols = cols * 2
 
-    # Check if capture
-    isCapture = False
-    if len(m) == 6:
-        isCapture = True
-        captured = (m[2], m[3])
-        m = (m[0], m[1], m[4], m[5])
+    print(m)
 
     # Set moving pieces type
     cellValue = b[m[1]][m[0]]
@@ -260,9 +252,6 @@ def move(b, m):
             king = False
 
     # Update board
-    if isCapture:
-        b[captured[1]][captured[0]] = 0
-
     b[m[3]][m[2]] = b[m[1]][m[0]]
 
     # Update board if piece promoted
@@ -281,12 +270,6 @@ def move(b, m):
         drawPiece(rows, gridCols, m[3], m[2] * 2, color, king)
     else:
         drawPiece(rows, gridCols, m[3], m[2] * 2 + 1, color, king)
-
-    if isCapture:
-        if captured[1] % 2 == 0:
-            drawCell(rows, gridCols, captured[1], captured[0] * 2, "white")
-        else:
-            drawCell(rows, gridCols, captured[1], captured[0] * 2 + 1, "white")
 
     return b
 
@@ -495,25 +478,44 @@ def isGameOver(b):
             return (False, 0)
                                  
 # TODO In progress
-def main():
+def main():    
     b = initialiseBoard()
-    print(b)
+    #print(b)
     drawBoard(b)
+
+    # Black player starts first
+    currentPlayer = 1
+    gameOverState = isGameOver(b)
+    while not gameOverState[0]:
+        # Get captures and moves and make one if available
+        captureMoves = captures(b, currentPlayer)
+        moveMoves = moves(b, currentPlayer)
+        
+        if len(captureMoves) > 0:
+            capture(b, random.choice(captureMoves))
+        elif len(moveMoves) > 0:
+            move(b, random.choice(moveMoves))
+            
+        # Switch player
+        currentPlayer *= -1
+
+        # Update game over state
+        gameOverState = isGameOver(b)
+
+    if gameOverState[1] == 1:
+        print("Player black wins!")
+    else:
+        print("Player white wins!")
 
     # This section is purely for board "e.txt" and includes a black capture
     #print("Black captures")
     #bc = captures(b, 1)
     #print(bc)
-    
-    #print("White captures")
-    #wc = captures(b, -1)
-    #print(wc)
 
-    #move(wc[0])
     #capture(b, bc[0])
     # End black capture section
 
-    gameOverState = isGameOver(b)
-    print("GameOver: %r, Victor: %d" % (gameOverState[0], gameOverState[1]))
+    #gameOverState = isGameOver(b)
+    #print("GameOver: %r, Victor: %d" % (gameOverState[0], gameOverState[1]))
 
 main()
