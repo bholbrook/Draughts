@@ -439,13 +439,25 @@ def captures(b, c):
 
 # Advanced, general functions below
 def recursiveCaptures(b, c):
-    if len(c) == 0:
-        return b
+    finalCaptures = []    
+    intitialCaptures = captures(b, c)
+    
+    if len(intitialCaptures) == 0:
+        return finalCaptures
 
     #else:
     # TODO Write me
         #caps = captures(b, c)
         #return recursiveCaptures(b, c)
+
+def coordCapture(b, c, x, y, caps):
+    initCaps = captures(b, c)
+
+    finalCaps = []
+    tempRow = []
+    for cap in initCaps:
+        tempRow.append(cap)
+    
 
 def capture(b, ms):
     rows = len(b)
@@ -552,11 +564,14 @@ def main():
     gameOverState = isGameOver(b)
     while not gameOverState[0]:
         # Get captures and moves and make one if available
-        captureMoves = captures(b, currentPlayer)
+        #captureMoves = captures(b, currentPlayer)
+        captureMoves = recursiveCaptures(b, currentPlayer)
         moveMoves = moves(b, currentPlayer)
         
         if len(captureMoves) > 0:
-            capture(b, random.choice(captureMoves))
+            moveMade = random.choice(captureMoves)
+            for m in moveMade:
+                capture(b, m)
         elif len(moveMoves) > 0:
             move(b, random.choice(moveMoves))
             
