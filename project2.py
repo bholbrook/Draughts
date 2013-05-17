@@ -89,7 +89,7 @@ def drawRectangle(x, y, w, h, innerColor, fill, borderColor):
 # Draw a single cell
 # Note: Rows and cols are the grid dimensions, not the board dimensions
 def drawCell(rows, cols, r, c, color):
-    print("DrawCell() %d, %d, %d, %d" % (rows, cols, r, c))
+    #print("DrawCell() %d, %d, %d, %d" % (rows, cols, r, c))
     
     squareWidth = 60
     startX = 0 - (cols * squareWidth) / 2
@@ -142,7 +142,7 @@ def drawCircle(x, y, r, innerColor, fill, borderColor):
 # Draw a single piece
 # Note: Rows and cols are the grid dimensions, not the board dimensions
 def drawPiece(rows, cols, r, c, color, king):
-    print("DrawPiece() %d, %d, %d, %d" % (rows, cols, r, c))
+    #print("DrawPiece() %d, %d, %d, %d" % (rows, cols, r, c))
     
     squareWidth = 60
     startX = 0 - (cols * squareWidth) / 2
@@ -234,9 +234,6 @@ def move(b, m):
     rows = len(b)
     cols = len(b[0])
     gridCols = cols * 2
-
-    print("M:")
-    print(m)
 
     # Check if capture
     isCapture = False
@@ -394,6 +391,66 @@ def captures(b, c):
                                 
     return captures
 
+# Advanced, general functions below
+def recursiveCaptures(b, c):
+    if len(c) == 0:
+        return b
+
+    #else:
+    # TODO Write me
+        #caps = captures(b, c)
+        #return recursiveCaptures(b, c)
+
+def capture(b, ms):
+    rows = len(b)
+    cols = len(b[0])
+    gridCols = cols * 2
+
+    # Set moving pieces type
+    cellValue = b[ms[1]][ms[0]]
+    if cellValue == -1 or cellValue == -2:
+        color = "white"
+
+        if ms[5] == 0:
+            king = True
+        else:
+            king = False
+    else:
+        color = "black"
+
+        if ms[5] == rows - 1:
+            king = True
+        else:
+            king = False
+
+    # Update board
+    b[ms[5]][ms[4]] = b[ms[1]][ms[0]]
+    b[ms[3]][ms[2]] = 0    
+    b[ms[1]][ms[0]] = 0
+
+    # Update board if piece promoted
+    if king:
+        b[ms[5]][ms[4]] *= 2   
+
+    # Redraw new moves
+    # Needs to be converted from half to full column width
+    if ms[1] % 2 == 0:
+        drawCell(rows, gridCols, ms[1], ms[0] * 2, "white")
+    else :
+        drawCell(rows, gridCols, ms[1], ms[0] * 2 + 1, "white")
+
+    if ms[5] % 2 == 0:
+        drawPiece(rows, gridCols, ms[5], ms[4] * 2, color, king)
+    else:
+        drawPiece(rows, gridCols, ms[5], ms[4] * 2 + 1, color, king)
+
+    if ms[3] % 2 == 0:
+        drawCell(rows, gridCols, ms[3], ms[2] * 2, "white")
+    else:
+        drawCell(rows, gridCols, ms[3], ms[2] * 2 + 1, "white")
+
+    return b
+
 # TODO In progress
 def main():
     b = initialiseBoard()
@@ -415,16 +472,9 @@ def main():
     print(wc)
 
     #move(wc[0])
-    move(b, bc[0])
+    capture(b, bc[0])
     # End black capture section
 
     #drawCircle(0, 0, 10, "blue", True, "blue")
-
-# Advanced, general functions below
-#def recursiveCaptures(b, c):
-
-#def capture(b, ms):
-
-#def main():
 
 main()
