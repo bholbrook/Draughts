@@ -179,7 +179,7 @@ def moves(b, c):
 
             # Found a white piece
             if c == -1 and (piece == -1 or piece == -2):
-                print("White piece at (%d, %d)" % (col, row))
+               # print("White piece at (%d, %d)" % (col, row))
                 # Height boundary check
                 if row - 1 >= 0:
                     #Check board row shift
@@ -191,15 +191,12 @@ def moves(b, c):
                         if col < cols and b[row-1][col] == 0:
                             moves.append((col, row, col, row-1))
                     else:
-                        print("Getting to here")
                         # Left move position check
-                        print("Col: %d, Row: %d, b[][]: %d, newb[][]: %d" % (col, row, b[row][col], b[row-1][col]))
+                        #print("Col: %d, Row: %d, b[][]: %d, newb[][]: %d" % (col, row, b[row][col], b[row-1][col]))
                         if col >= 0 and b[row-1][col] == 0:
-                            print("Left")
                             moves.append((col, row, col, row-1))
                         # Right move position check
                         if col + 1 < cols and b[row-1][col+1] == 0:
-                            print("Right")
                             moves.append((col, row, col+1, row-1))
     
                 # King piece. Check moves below current position
@@ -224,7 +221,7 @@ def moves(b, c):
 
             # Found a black piece
             if c == 1 and (piece == 1 or piece == 2):
-                print("Black piece at (%d, %d)" % (col, row))
+                #print("Black piece at (%d, %d)" % (col, row))
                 # Height boundary check
                 if row + 1 < rows:
                     #Check board row shift
@@ -270,32 +267,29 @@ def move(b, m):
     cols = len(b[0])
     gridCols = cols * 2
 
-    print(m)
-
     # Set moving pieces type
     cellValue = b[m[1]][m[0]]
+    #print("cellValue: %d" % b[m[1]][m[0]])
     if cellValue == -1 or cellValue == -2:
         color = "white"
 
-        if m[3] == 0:
+        if m[3] == 0 or cellValue == -2:
             king = True
+            b[m[1]][m[0]] = -2
         else:
             king = False
     else:
         color = "black"
 
-        if m[3] == rows - 1:
+        if m[3] == rows - 1 or cellValue == 2:
             king = True
+            b[m[1]][m[0]] = 2
         else:
             king = False
 
     # Update board
     b[m[3]][m[2]] = b[m[1]][m[0]]
-
-    # Update board if piece promoted
-    if king:
-        b[m[3]][m[2]] *= 2        
-    b[m[1]][m[0]] = 0   
+    b[m[1]][m[0]] = 0
 
     # Redraw new moves
     # Needs to be converted from half to full column width
@@ -305,8 +299,10 @@ def move(b, m):
         drawCell(rows, gridCols, m[1], m[0] * 2 + 1, "white")
 
     if m[3] % 2 == 0:
+        #print("Drawing piece - %s, %r" % (color, king))
         drawPiece(rows, gridCols, m[3], m[2] * 2, color, king)
     else:
+        #print("Drawing piece - %s, %r" % (color, king))
         drawPiece(rows, gridCols, m[3], m[2] * 2 + 1, color, king)
 
     return b
@@ -417,23 +413,23 @@ def captures(b, c):
                             # Left move position check
                             if col - 1 >= 0 and b[row-2][col-1] == 0:
                                 # Jumped piece check
-                                if b[row-1][col-1] == 1 or b[row-1][col-1] == 2:
+                                if b[row-1][col-1] == -1 or b[row-1][col-1] == -2:
                                     captures.append((col, row, col-1, row-1, col-1, row-2))
                             # Right move position check
                             if col + 1 < cols and b[row-2][col+1] == 0:
                                 # Jumped piece check
-                                if b[row-1][col] == 1 or b[row-1][col] == 2:
+                                if b[row-1][col] == -1 or b[row-1][col] == -2:
                                     captures.append((col, row, col, row-1, col+1, row-2))
                         else:
                             # Left move position check
                             if col - 1 >= 0 and b[row-2][col-1] == 0:
                                 # Jumped piece check
-                                if b[row-1][col] == 1 or b[row-1][col] == 2:
+                                if b[row-1][col] == -1 or b[row-1][col] == -2:
                                     captures.append((col, row, col, row-1, col-1, row-2))
                             # Right move position check
                             if col + 1 < cols and b[row-2][col+1] == 0:
                                 # Jumped piece check
-                                if b[row-1][col+1] == 1 or b[row-1][col+1] == 2:
+                                if b[row-1][col+1] == -1 or b[row-1][col+1] == -2:
                                     captures.append((col, row, col+1, row-1, col+1, row-2))
                                 
     return captures
@@ -458,15 +454,17 @@ def capture(b, ms):
     if cellValue == -1 or cellValue == -2:
         color = "white"
 
-        if ms[5] == 0:
+        if ms[5] == 0 or cellValue == -2:
             king = True
+            b[ms[1]][ms[0]] = -2
         else:
             king = False
     else:
         color = "black"
 
-        if ms[5] == rows - 1:
+        if ms[5] == rows - 1 or cellValue == 2:
             king = True
+            b[ms[1]][ms[0]] = 2
         else:
             king = False
 
@@ -474,10 +472,6 @@ def capture(b, ms):
     b[ms[5]][ms[4]] = b[ms[1]][ms[0]]
     b[ms[3]][ms[2]] = 0    
     b[ms[1]][ms[0]] = 0
-
-    # Update board if piece promoted
-    if king:
-        b[ms[5]][ms[4]] *= 2   
 
     # Redraw new moves
     # Needs to be converted from half to full column width
@@ -487,8 +481,10 @@ def capture(b, ms):
         drawCell(rows, gridCols, ms[1], ms[0] * 2 + 1, "white")
 
     if ms[5] % 2 == 0:
+        #print("Drawing piece - %s, %r" % (color, king))
         drawPiece(rows, gridCols, ms[5], ms[4] * 2, color, king)
     else:
+        #print("Drawing piece - %s, %r" % (color, king))
         drawPiece(rows, gridCols, ms[5], ms[4] * 2 + 1, color, king)
 
     if ms[3] % 2 == 0:
@@ -533,10 +529,6 @@ def isGameOver(b):
         blackCaptures = captures(b, 1)
         numWhiteMoves = len(whiteMoves) + len(whiteCaptures)
         numBlackMoves = len(blackMoves) + len(blackCaptures)
-        print(whiteMoves)
-        print(whiteCaptures)
-        print(blackMoves)
-        print(blackCaptures)
 
         if numWhiteMoves == 0 and numBlackMoves == 0:
             # No more available moves, no victor
@@ -545,10 +537,8 @@ def isGameOver(b):
             # Move can be made, no victor
             return (False, 0)
                                  
-# TODO In progress
 def main():    
     b = initialiseBoard()
-    #print(b)
     drawBoard(b)
 
     # Black player starts first
@@ -574,16 +564,5 @@ def main():
         print("Player black wins!")
     else:
         print("Player white wins!")
-
-    # This section is purely for board "e.txt" and includes a black capture
-    #print("Black captures")
-    #bc = captures(b, 1)
-    #print(bc)
-
-    #capture(b, bc[0])
-    # End black capture section
-
-    #gameOverState = isGameOver(b)
-    #print("GameOver: %r, Victor: %d" % (gameOverState[0], gameOverState[1]))
 
 main()
