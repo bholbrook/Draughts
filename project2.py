@@ -451,30 +451,69 @@ def capture(b, ms):
 
     return b
 
+# Given a board state returns if a player has won and which colour
+# Black: 1, White, -1, No victor: 0
+# Return ex. (True, 1): Black victory
+def isGameOver(b):
+    rows = len(b)
+    cols = len(b[0])
+
+    numBlackPieces = 0
+    numWhitePieces = 0
+    for r in range(rows):
+        for c in range(cols):
+            piece = b[r][c]
+            if piece == -1 or piece == -2:
+                numWhitePieces += 1
+            elif piece == 1 or piece == 2:
+                numBlackPieces += 1
+
+    # Check number of pieces on board
+    if numBlackPieces == 0 and numWhitePieces == 0:
+        # No pieces left, no victor
+        return (True, 0)
+    elif numBlackPieces == 0:
+        # No black pieces left, white victory
+        return (True, -1)
+    elif numWhitePieces == 0:
+        # No white pieces left, black victory
+        return (True, 1)
+    else:
+        # Both players have pieces
+        whiteMoves = moves(b, -1)
+        blackMoves = moves(b, 1)
+        whiteCaptures = captures(b, -1)
+        blackCaptures = captures(b, 1)
+        numWhiteMoves = len(whiteMoves) + len(whiteCaptures)
+        numBlackMoves = len(blackMoves) + len(blackCaptures)
+
+        if numWhiteMoves == 0 and numBlackMoves == 0:
+            # No more available moves, no victor
+            return (True, 0)
+        else:
+            # Move can be made, no victor
+            return (False, 0)
+                                 
 # TODO In progress
 def main():
     b = initialiseBoard()
     print(b)
     drawBoard(b)
 
-    #t = (0, 2, 1, 3)
-    #t = (0, 0, 1, 1, 2, 2)
-    #b = move(b, t)
-    print(b)
-
     # This section is purely for board "e.txt" and includes a black capture
-    print("Black captures")
-    bc = captures(b, 1)
-    print(bc)
+    #print("Black captures")
+    #bc = captures(b, 1)
+    #print(bc)
     
-    print("White captures")
-    wc = captures(b, -1)
-    print(wc)
+    #print("White captures")
+    #wc = captures(b, -1)
+    #print(wc)
 
     #move(wc[0])
-    capture(b, bc[0])
+    #capture(b, bc[0])
     # End black capture section
 
-    #drawCircle(0, 0, 10, "blue", True, "blue")
+    gameOverState = isGameOver(b)
+    print("GameOver: %r, Victor: %d" % (gameOverState[0], gameOverState[1]))
 
 main()
