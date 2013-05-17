@@ -267,6 +267,9 @@ def move(b, m):
     cols = len(b[0])
     gridCols = cols * 2
 
+    print("Move()")
+    print(m)
+
     # Set moving pieces type
     cellValue = b[m[1]][m[0]]
     #print("cellValue: %d" % b[m[1]][m[0]])
@@ -299,10 +302,10 @@ def move(b, m):
         drawCell(rows, gridCols, m[1], m[0] * 2 + 1, "white")
 
     if m[3] % 2 == 0:
-        #print("Drawing piece - %s, %r" % (color, king))
+        print("Drawing piece - %s, %r" % (color, king))
         drawPiece(rows, gridCols, m[3], m[2] * 2, color, king)
     else:
-        #print("Drawing piece - %s, %r" % (color, king))
+        print("Drawing piece - %s, %r" % (color, king))
         drawPiece(rows, gridCols, m[3], m[2] * 2 + 1, color, king)
 
     return b
@@ -449,6 +452,9 @@ def capture(b, ms):
     cols = len(b[0])
     gridCols = cols * 2
 
+    print("Capture()")
+    print(ms)
+
     # Set moving pieces type
     cellValue = b[ms[1]][ms[0]]
     if cellValue == -1 or cellValue == -2:
@@ -481,10 +487,10 @@ def capture(b, ms):
         drawCell(rows, gridCols, ms[1], ms[0] * 2 + 1, "white")
 
     if ms[5] % 2 == 0:
-        #print("Drawing piece - %s, %r" % (color, king))
+        print("Drawing piece - %s, %r" % (color, king))
         drawPiece(rows, gridCols, ms[5], ms[4] * 2, color, king)
     else:
-        #print("Drawing piece - %s, %r" % (color, king))
+        print("Drawing piece - %s, %r" % (color, king))
         drawPiece(rows, gridCols, ms[5], ms[4] * 2 + 1, color, king)
 
     if ms[3] % 2 == 0:
@@ -559,6 +565,8 @@ def main():
 
         # Update game over state
         gameOverState = isGameOver(b)
+
+        input("Press enter to continue...")        
 
     if gameOverState[1] == 1:
         print("Player black wins!")
