@@ -651,8 +651,8 @@ def main():
         # Get captures and moves and make one if available
         #captureMoves = captures(b, currentPlayer)
         captureMoves = recursiveCaptures(b, currentPlayer)
-        print("CaptureMoves")
-        print(captureMoves)
+        #print("CaptureMoves")
+        #print(captureMoves)
         moveMoves = moves(b, currentPlayer)
         
         if captureMoves != None and len(captureMoves) > 0:
@@ -672,7 +672,7 @@ def main():
         gameOverState = isGameOver(b)
 
         # Manual continue for each move made
-        input("Press enter to continue...")        
+        #input("Press enter to continue...")        
 
     if gameOverState[1] == 1:
         print("Player black wins!")
