@@ -5,7 +5,6 @@
 
 #README
 # We need to make the function params for x,y values consistent so they always take in x then y rather than y then x
-# Need to split the capture/move drawing into separate functions 
 
 import turtle
 import random
@@ -269,12 +268,10 @@ def move(b, m):
     cols = len(b[0])
     gridCols = cols * 2
 
-    #print("Move()")
-    #print(m)
+    print("Move(): %s" % (m,))
 
     # Set moving pieces type
     cellValue = b[m[1]][m[0]]
-    print("cellValue: %d" % b[m[1]][m[0]])
     if cellValue == -1 or cellValue == -2:
         color = "white"
 
@@ -317,8 +314,7 @@ def moveNoDraw(b, m):
     cols = len(b[0])
     gridCols = cols * 2
 
-    print("Move()")
-    print(m)
+    print("Move(): %s" % (m,))
 
     # Set moving pieces type
     cellValue = b[m[1]][m[0]]
@@ -463,38 +459,54 @@ def captures(b, c):
                                 
     return captures
 
-# In progress
-def recursiveCaptures(b, c):
-    #return captures(b, c)
-    
+def recursiveCaptures(b, c):    
     finalCaptures = []
     initCaptures = captures(b, c)
 
     for cap in initCaptures:
         capRow = [cap]        
         finalCaptures.append(capRow)
+
+    recCaps = recCaptures(b, c, finalCaptures)
+    #recCaps = recCaptures(b, c, [])
+    #print("recCaps")
+    #print(recCaps)
+
+    # Filter any subset moves out
+    for m in recCaps:
+        for n in recCaps:
+            if set(m).issubset(set(n)) and m != n:
+                recCaps.remove(m)
+                break
     
-    print(finalCaptures)
-    return recCaptures(b, c, finalCaptures)
+    return recCaps
 
 def recCaptures(b, c, capData):
-    print("recCaptures()")
-    print(capData)
+    #print("capData")
+    #print(capData)
     
     caps = captures(b, c)
     if len(caps) == 0:
-        print("Empty")
+        #print("len(caps) == 0")
         return capData
 
     for capRow in capData:
         cloneBoard = copy.deepcopy(b)
-        cloneBoard = capture(cloneBoard, capRow[-1])
-        coordCaps = capturesAtCoord(cloneBoard, c, capRow[-1][0], capRow[-1][1])
+        cloneBoard = captureNoDraw(cloneBoard, capRow[-1])
+        #print("cloneBoard: %s" % (cloneBoard))
+        #print("capRow[-1]: %s" % (capRow[-1],))
+        coordCaps = capturesAtCoord(cloneBoard, c, capRow[-1][4], capRow[-1][5])
+        #print("CoordCaps: %s, len: %d" % (coordCaps, len(coordCaps)))
+            
         for coordCap in coordCaps:
+            cloneBoard = captureNoDraw(cloneBoard, coordCap)
             dupeCapRow = copy.deepcopy(capRow)
             dupeCapRow.append(coordCap)
+            #print("dupecaprow: %s" % (dupeCapRow))
             capData.append(dupeCapRow)
-            return recCaptures(cloneBoard, c, capData)        
+            return recCaptures(cloneBoard, c, capData)
+
+    return capData
 
 def capturesAtCoord(b, c, col, row):
     finalCaps = []
@@ -509,12 +521,10 @@ def capture(b, ms):
     cols = len(b[0])
     gridCols = cols * 2
 
-    #print("Capture()")
-    #print(ms)
+    print("Capture(): %s" % (ms,))
 
     # Set moving pieces type
     cellValue = b[ms[1]][ms[0]]
-    print("cellValue: %d" % b[ms[1]][ms[0]])
     if cellValue == -1 or cellValue == -2:
         color = "white"
 
@@ -563,8 +573,7 @@ def captureNoDraw(b, ms):
     cols = len(b[0])
     gridCols = cols * 2
 
-    print("Capture()")
-    print(ms)
+    print("Capture(): %s" % (ms,))
 
     # Set moving pieces type
     cellValue = b[ms[1]][ms[0]]
@@ -633,24 +642,28 @@ def isGameOver(b):
                                  
 def main():    
     b = initialiseBoard()
-    #drawBoard(b)
+    drawBoard(b)
 
     # Black player starts first
     currentPlayer = 1
     gameOverState = isGameOver(b)
     while not gameOverState[0]:
         # Get captures and moves and make one if available
-        captureMoves = captures(b, currentPlayer)
-        #captureMoves = recursiveCaptures(b, currentPlayer)
+        #captureMoves = captures(b, currentPlayer)
+        captureMoves = recursiveCaptures(b, currentPlayer)
+        print("CaptureMoves")
+        print(captureMoves)
         moveMoves = moves(b, currentPlayer)
         
-        if len(captureMoves) > 0:
+        if captureMoves != None and len(captureMoves) > 0:
             moveMade = random.choice(captureMoves)
-            captureNoDraw(b, moveMade)
-            #for m in moveMade:
-            #    capture(b, m)
+            #captureNoDraw(b, moveMade)
+            #capture(b, moveMade)
+            for m in moveMade:
+                capture(b, m)
         elif len(moveMoves) > 0:
-            moveNoDraw(b, random.choice(moveMoves))
+            #moveNoDraw(b, random.choice(moveMoves))
+            move(b, random.choice(moveMoves))
             
         # Switch player
         currentPlayer *= -1
@@ -659,18 +672,16 @@ def main():
         gameOverState = isGameOver(b)
 
         # Manual continue for each move made
-        #input("Press enter to continue...")        
+        input("Press enter to continue...")        
 
     if gameOverState[1] == 1:
         print("Player black wins!")
     else:
         print("Player white wins!")
 
-main()
-
 def test():
     b = initialiseBoard()
-    drawBoard(b)
+    #drawBoard(b)
 
     c = 1
     rec = recursiveCaptures(b, c)
@@ -678,4 +689,5 @@ def test():
     print(rec)
     #print(capturesAtCoord(b, c, 0, 1))
 
+main()
 #test()
