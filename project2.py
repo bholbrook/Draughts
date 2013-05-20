@@ -459,90 +459,33 @@ def captures(b, c):
                                 
     return captures
 
-blah = []
-
-def georgesRecursiveCaptures(b, c):
+# Need to confirm on multiple situations
+def recursiveCaptures(b, c):
+    captureData = []
+    
     for capture in captures(b, c):
         clonedBoard = copy.deepcopy(b)
         clonedBoard = captureNoDraw(clonedBoard, capture)
         # print(capture)
-        callthis(clonedBoard, c, [capture])
-    return blah
+        captureData = capturePath(clonedBoard, c, [capture], captureData)
+    return captureData
 
-def callthis(b, c, path):
-    cap = captures(b, c)
+def capturePath(b, c, path, captureData):
+    caps = captures(b, c)
     count = 0
-    for capture in cap:
+    for capture in caps:
         if capture[0] == path[-1][-2] and capture[1] == path[-1][-1]:
             count += 1
             clonepath = copy.deepcopy(path)
             clonepath.append(capture)
             cloneBoard = copy.deepcopy(b)
             captureNoDraw(cloneBoard, capture)
-            callthis(cloneBoard, c, clonepath)
+            captureData = capturePath(cloneBoard, c, clonepath, captureData)
 
     if count == 0:
-        blah.append(path)
+        captureData.append(path)
 
-
-# TODO Fix this
-# Doesn't appear to go deeper than 2 jumps
-# Needs to be tested on multiple scenarios
-def recursiveCaptures(b, c):    
-    return georgesRecursiveCaptures(b, c)
-    finalCaptures = []
-    initCaptures = captures(b, c)
-
-    for cap in initCaptures:
-        capRow = [cap]        
-        finalCaptures.append(capRow)
-
-    recCaps = recCaptures(b, c, finalCaptures)
-    #recCaps = recCaptures(b, c, [])
-    #print("recCaps")
-    #print(recCaps)
-
-    # Filter any subset moves out
-    for m in recCaps:
-        for n in recCaps:
-            if set(m).issubset(set(n)) and m != n:
-                recCaps.remove(m)
-    
-    return recCaps
-
-def recCaptures(b, c, capData):
-    print("capData")
-    print(capData)
-    caps = captures(b, c)
-    print("len(caps) == %d" % (len(caps)))
-    if len(caps) == 0:
-        #print("len(caps) == 0")
-        return capData
-
-    for capRow in capData:
-        cloneBoard = copy.deepcopy(b)        
-        cloneBoard = captureNoDraw(cloneBoard, capRow[-1])
-        #print("capRow[-1]: %s" % (capRow[-1],))
-        coordCaps = capturesAtCoord(cloneBoard, c, capRow[-1][4], capRow[-1][5])
-            
-        for coordCap in coordCaps:
-            cloneBoard = captureNoDraw(cloneBoard, coordCap)
-            dupeCapRow = copy.deepcopy(capRow)
-            dupeCapRow.append(coordCap)
-            capData.append(dupeCapRow)
-            # return recCaptures(cloneBoard, c, capData)
-            capData = recCaptures(cloneBoard, c, capData)
-            #capData = recCaptures(cloneBoard, c, capData)
-
-    return capData
-
-def capturesAtCoord(b, c, col, row):
-    finalCaps = []
-    for cap in captures(b, c):
-        if cap[0] == col and cap[1] == row:
-            finalCaps.append(cap)
-
-    return finalCaps
+    return captureData
 
 def capture(b, ms):
     rows = len(b)
