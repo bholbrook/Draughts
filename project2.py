@@ -619,6 +619,11 @@ def main():
     currentPlayer = 1
     gameOverState = isGameOver(b)
     while not gameOverState[0]:
+        if currentPlayer == 1:
+            print("Player black to move")
+        else:
+            print("Player white to move")
+        
         # Get captures and moves and make one if available
         #captureMoves = captures(b, currentPlayer)
         captureMoves = recursiveCaptures(b, currentPlayer)
@@ -659,5 +664,5 @@ def test():
     print("RecursiveCaptures")
     print(rec)
 
-#main()
-test()
+main()
+#test()
