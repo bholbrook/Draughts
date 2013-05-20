@@ -459,6 +459,9 @@ def captures(b, c):
                                 
     return captures
 
+# TODO Fix this
+# Doesn't appear to go deeper than 2 jumps
+# Needs to be tested on multiple scenarios
 def recursiveCaptures(b, c):    
     finalCaptures = []
     initCaptures = captures(b, c)
@@ -477,15 +480,15 @@ def recursiveCaptures(b, c):
         for n in recCaps:
             if set(m).issubset(set(n)) and m != n:
                 recCaps.remove(m)
-                break
     
     return recCaps
 
 def recCaptures(b, c, capData):
-    #print("capData")
-    #print(capData)
+    print("capData")
+    print(capData)
     
     caps = captures(b, c)
+    print("len(caps) == %d" % (len(caps)))
     if len(caps) == 0:
         #print("len(caps) == 0")
         return capData
@@ -496,7 +499,7 @@ def recCaptures(b, c, capData):
         #print("cloneBoard: %s" % (cloneBoard))
         #print("capRow[-1]: %s" % (capRow[-1],))
         coordCaps = capturesAtCoord(cloneBoard, c, capRow[-1][4], capRow[-1][5])
-        #print("CoordCaps: %s, len: %d" % (coordCaps, len(coordCaps)))
+        print("CoordCaps: %s, len: %d" % (coordCaps, len(coordCaps)))
             
         for coordCap in coordCaps:
             cloneBoard = captureNoDraw(cloneBoard, coordCap)
@@ -504,8 +507,9 @@ def recCaptures(b, c, capData):
             dupeCapRow.append(coordCap)
             #print("dupecaprow: %s" % (dupeCapRow))
             capData.append(dupeCapRow)
-            return recCaptures(cloneBoard, c, capData)
-
+            #capData = recCaptures(cloneBoard, c, capData)
+        capData = recCaptures(cloneBoard, c, capData)
+        
     return capData
 
 def capturesAtCoord(b, c, col, row):
@@ -573,7 +577,7 @@ def captureNoDraw(b, ms):
     cols = len(b[0])
     gridCols = cols * 2
 
-    print("Capture(): %s" % (ms,))
+    #print("Capture(): %s" % (ms,))
 
     # Set moving pieces type
     cellValue = b[ms[1]][ms[0]]
@@ -672,7 +676,7 @@ def main():
         gameOverState = isGameOver(b)
 
         # Manual continue for each move made
-        #input("Press enter to continue...")        
+        input("Press enter to continue...")        
 
     if gameOverState[1] == 1:
         print("Player black wins!")
@@ -687,7 +691,6 @@ def test():
     rec = recursiveCaptures(b, c)
     print("RecursiveCaptures")
     print(rec)
-    #print(capturesAtCoord(b, c, 0, 1))
 
-main()
-#test()
+#main()
+test()
