@@ -459,10 +459,37 @@ def captures(b, c):
                                 
     return captures
 
+blah = []
+
+def georgesRecursiveCaptures(b, c):
+    for capture in captures(b, c):
+        clonedBoard = copy.deepcopy(b)
+        clonedBoard = captureNoDraw(clonedBoard, capture)
+        # print(capture)
+        callthis(clonedBoard, c, [capture])
+    return blah
+
+def callthis(b, c, path):
+    cap = captures(b, c)
+    count = 0
+    for capture in cap:
+        if capture[0] == path[-1][-2] and capture[1] == path[-1][-1]:
+            count += 1
+            clonepath = copy.deepcopy(path)
+            clonepath.append(capture)
+            cloneBoard = copy.deepcopy(b)
+            captureNoDraw(cloneBoard, capture)
+            callthis(cloneBoard, c, clonepath)
+
+    if count == 0:
+        blah.append(path)
+
+
 # TODO Fix this
 # Doesn't appear to go deeper than 2 jumps
 # Needs to be tested on multiple scenarios
 def recursiveCaptures(b, c):    
+    return georgesRecursiveCaptures(b, c)
     finalCaptures = []
     initCaptures = captures(b, c)
 
@@ -486,7 +513,6 @@ def recursiveCaptures(b, c):
 def recCaptures(b, c, capData):
     print("capData")
     print(capData)
-    
     caps = captures(b, c)
     print("len(caps) == %d" % (len(caps)))
     if len(caps) == 0:
@@ -494,22 +520,20 @@ def recCaptures(b, c, capData):
         return capData
 
     for capRow in capData:
-        cloneBoard = copy.deepcopy(b)
+        cloneBoard = copy.deepcopy(b)        
         cloneBoard = captureNoDraw(cloneBoard, capRow[-1])
-        #print("cloneBoard: %s" % (cloneBoard))
         #print("capRow[-1]: %s" % (capRow[-1],))
         coordCaps = capturesAtCoord(cloneBoard, c, capRow[-1][4], capRow[-1][5])
-        print("CoordCaps: %s, len: %d" % (coordCaps, len(coordCaps)))
             
         for coordCap in coordCaps:
             cloneBoard = captureNoDraw(cloneBoard, coordCap)
             dupeCapRow = copy.deepcopy(capRow)
             dupeCapRow.append(coordCap)
-            #print("dupecaprow: %s" % (dupeCapRow))
             capData.append(dupeCapRow)
+            # return recCaptures(cloneBoard, c, capData)
+            capData = recCaptures(cloneBoard, c, capData)
             #capData = recCaptures(cloneBoard, c, capData)
-        capData = recCaptures(cloneBoard, c, capData)
-        
+
     return capData
 
 def capturesAtCoord(b, c, col, row):
@@ -676,7 +700,7 @@ def main():
         gameOverState = isGameOver(b)
 
         # Manual continue for each move made
-        input("Press enter to continue...")        
+        # input("Press enter to continue...")        
 
     if gameOverState[1] == 1:
         print("Player black wins!")
