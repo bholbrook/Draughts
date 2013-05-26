@@ -262,13 +262,20 @@ def moves(b, c):
                                 moves.append((col, row, col+1, row-1))
                                 
     return moves
-    
+
+# Makes a move or a capture and redraws the board
 def move(b, m):
     rows = len(b)
     cols = len(b[0])
     gridCols = cols * 2
 
-    print("Move(): %s" % (m,))
+    isCapture = False
+    if len(m) == 6:
+        isCapture = True
+        captureCoord = (m[2], m[3])
+        m = (m[0], m[1], m[4], m[5])
+
+    print("Move(): %s, Capture: %r" % ((m,), isCapture))
 
     # Set moving pieces type
     cellValue = b[m[1]][m[0]]
@@ -292,6 +299,8 @@ def move(b, m):
     # Update board
     b[m[3]][m[2]] = b[m[1]][m[0]]
     b[m[1]][m[0]] = 0
+    if isCapture:
+        b[captureCoord[1]][captureCoord[0]] = 0
 
     # Redraw new moves
     # Needs to be converted from half to full column width
@@ -299,6 +308,12 @@ def move(b, m):
         drawCell(rows, gridCols, m[1], m[0] * 2, "white")
     else :
         drawCell(rows, gridCols, m[1], m[0] * 2 + 1, "white")
+
+    # Redraw captured cell
+    if isCapture and captureCoord[1] % 2 == 0:
+        drawCell(rows, gridCols, captureCoord[1], captureCoord[0] * 2, "white")
+    elif isCapture:
+        drawCell(rows, gridCols, captureCoord[1], captureCoord[0] * 2 + 1, "white")
 
     if m[3] % 2 == 0:
         #print("Drawing piece - %s, %r" % (color, king))
@@ -309,16 +324,22 @@ def move(b, m):
 
     return b
 
+# Makes a move or a capture without redrawing the board
 def moveNoDraw(b, m):
     rows = len(b)
     cols = len(b[0])
     gridCols = cols * 2
 
-    print("Move(): %s" % (m,))
+    isCapture = False
+    if len(m) == 6:
+        isCapture = True
+        captureCoord = (m[2], m[3])
+        m = (m[0], m[1], m[4], m[5])
+
+    print("Move(): %s, Capture: %r" % ((m,), isCapture))
 
     # Set moving pieces type
     cellValue = b[m[1]][m[0]]
-    #print("cellValue: %d" % b[m[1]][m[0]])
     if cellValue == -1 or cellValue == -2:
         if m[3] == 0 or cellValue == -2:
             b[m[1]][m[0]] = -2
@@ -329,8 +350,10 @@ def moveNoDraw(b, m):
     # Update board
     b[m[3]][m[2]] = b[m[1]][m[0]]
     b[m[1]][m[0]] = 0
+    if isCapture:
+        b[captureCoord[1]][captureCoord[0]] = 0
 
-    return b    
+    return b  
 
 def captures(b, c):
     rows = len(b)
@@ -487,55 +510,11 @@ def capturePath(b, c, path, captureData):
 
     return captureData
 
+# Takes a list of moves and makes each of them
 def capture(b, ms):
-    rows = len(b)
-    cols = len(b[0])
-    gridCols = cols * 2
-
-    print("Capture(): %s" % (ms,))
-
-    # Set moving pieces type
-    cellValue = b[ms[1]][ms[0]]
-    if cellValue == -1 or cellValue == -2:
-        color = "white"
-
-        if ms[5] == 0 or cellValue == -2:
-            king = True
-            b[ms[1]][ms[0]] = -2
-        else:
-            king = False
-    else:
-        color = "black"
-
-        if ms[5] == rows - 1 or cellValue == 2:
-            king = True
-            b[ms[1]][ms[0]] = 2
-        else:
-            king = False
-
-    # Update board
-    b[ms[5]][ms[4]] = b[ms[1]][ms[0]]
-    b[ms[3]][ms[2]] = 0    
-    b[ms[1]][ms[0]] = 0
-
-    # Redraw new moves
-    # Needs to be converted from half to full column width
-    if ms[1] % 2 == 0:
-        drawCell(rows, gridCols, ms[1], ms[0] * 2, "white")
-    else :
-        drawCell(rows, gridCols, ms[1], ms[0] * 2 + 1, "white")
-
-    if ms[5] % 2 == 0:
-        #print("Drawing piece - %s, %r" % (color, king))
-        drawPiece(rows, gridCols, ms[5], ms[4] * 2, color, king)
-    else:
-        #print("Drawing piece - %s, %r" % (color, king))
-        drawPiece(rows, gridCols, ms[5], ms[4] * 2 + 1, color, king)
-
-    if ms[3] % 2 == 0:
-        drawCell(rows, gridCols, ms[3], ms[2] * 2, "white")
-    else:
-        drawCell(rows, gridCols, ms[3], ms[2] * 2 + 1, "white")
+    if len(ms) > 0:
+        for m in ms:
+            b = move(b, m)
 
     return b
 
@@ -632,11 +611,8 @@ def main():
         moveMoves = moves(b, currentPlayer)
         
         if captureMoves != None and len(captureMoves) > 0:
-            moveMade = random.choice(captureMoves)
-            #captureNoDraw(b, moveMade)
-            #capture(b, moveMade)
-            for m in moveMade:
-                capture(b, m)
+            m = random.choice(captureMoves)
+            capture(b, m)
         elif len(moveMoves) > 0:
             #moveNoDraw(b, random.choice(moveMoves))
             move(b, random.choice(moveMoves))
