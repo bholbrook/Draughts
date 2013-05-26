@@ -272,7 +272,8 @@ def move(b, m):
         captureCoord = (m[2], m[3])
         m = (m[0], m[1], m[4], m[5])
 
-    print("Move(): %s, Capture: %r" % ((m,), isCapture))
+    print("Move(): %s, Capture: %r" % (m, isCapture))
+    print("R: %d, C: %d" % (rows, cols))
 
     # Set moving pieces type
     cellValue = b[m[1]][m[0]]
@@ -333,7 +334,7 @@ def moveNoDraw(b, m):
         captureCoord = (m[2], m[3])
         m = (m[0], m[1], m[4], m[5])
 
-    print("Move(): %s, Capture: %r" % ((m,), isCapture))
+    #print("Move(): %s, Capture: %r" % ((m,), isCapture))
 
     # Set moving pieces type
     cellValue = b[m[1]][m[0]]
@@ -452,7 +453,7 @@ def captures(b, c):
                 # King piece. Check moves below current position
                 if piece == 2:
                     # Height boundary check
-                    if row - 2 < rows:
+                    if row - 2 >= 0:
                         #Check board row shift
                         if row % 2 == 0:
                             # Left move position check
@@ -565,11 +566,11 @@ def isGameOver(b):
             return (False, 0)
                    
 def main():
-    autoGame = input("Do you want an automatic game? (y/n): ")
-    if autoGame == 'y' or autoGame == 'Y':
-        autoGame = True
+    manualGame = input("Do you want a manual game? (y/n): ")
+    if manualGame == 'y' or manualGame == 'Y':
+        manualGame = True
     else:
-        autoGame = False
+        manualGame = False
     
     b = initialiseBoard()
     drawBoard(b)
@@ -600,8 +601,8 @@ def main():
         # Update game over state
         gameOverState = isGameOver(b)
 
-        # Manual continue for each move made
-        if not autoGame:
+        # Manual continue required for each move made
+        if manualGame:
             input("Press enter to continue...")        
 
     if gameOverState[1] == 1:
@@ -609,14 +610,4 @@ def main():
     else:
         print("Player white wins!")
 
-def test():
-    b = initialiseBoard()
-    #drawBoard(b)
-
-    c = 1
-    rec = recursiveCaptures(b, c)
-    print("RecursiveCaptures")
-    print(rec)
-
 main()
-#test()
