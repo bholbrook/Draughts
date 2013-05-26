@@ -2,10 +2,6 @@
 # Benjamin Holbrook, 20761758
 # George Gooden, 20772597
 
-
-#README
-# We need to make the function params for x,y values consistent so they always take in x then y rather than y then x
-
 import turtle
 import random
 import copy
@@ -38,10 +34,10 @@ def drawBoard(b):
     cols = len(b[0])
     gridCols = cols * 2
     
-    drawGrid(rows, gridCols)
+    drawGrid(gridCols, rows)
 
     #print("Drawing pieces")
-    #print("DrawBoard() %d, %d" % (rows, cols))
+    #print("DrawBoard() %d, %d" % (cols, rows))
     
     for r in range(rows):
         for c in range(cols):
@@ -51,17 +47,18 @@ def drawBoard(b):
                 c += 1
 
             if piece == -2:
-                drawPiece(rows, gridCols, r, c, "white", True)
+                drawPiece(rows, gridCols, c, r, "white", True)
             elif piece == -1:
-                drawPiece(rows, gridCols, r, c, "white", False)
+                drawPiece(rows, gridCols, c, r, "white", False)
             elif piece == 1:
-                drawPiece(rows, gridCols, r, c, "black", False)
+                drawPiece(rows, gridCols, c, r, "black", False)
             elif piece == 2:
-                drawPiece(rows, gridCols, r, c, "black", True)
+                drawPiece(rows, gridCols, c, r, "black", True)
             elif piece == 0:
                 continue
             else:
-                print("Should never reach here")
+                raise SystemExit("Invalid piece value")
+                
 
 def drawRectangle(x, y, w, h, innerColor, fill, borderColor):
     t = turtle.Turtle()
@@ -90,8 +87,8 @@ def drawRectangle(x, y, w, h, innerColor, fill, borderColor):
 
 # Draw a single cell
 # Note: Rows and cols are the grid dimensions, not the board dimensions
-def drawCell(rows, cols, r, c, color):
-    #print("DrawCell() %d, %d, %d, %d" % (rows, cols, r, c))
+def drawCell(rows, cols, c, r, color):
+    #print("DrawCell() %d, %d, %d, %d" % (cols, rows, c, r))
     
     squareWidth = 60
     startX = 0 - (cols * squareWidth) / 2
@@ -104,7 +101,7 @@ def drawCell(rows, cols, r, c, color):
 
 # Draws the checkerboard grid
 # Note: Rows and cols are the grid dimensions, not the board dimensions
-def drawGrid(rows, cols):
+def drawGrid(cols, rows):
     #print("DrawGrid() %d, %d" % (rows, cols))
     
     squareWidth = 60
@@ -117,10 +114,10 @@ def drawGrid(rows, cols):
             y = startY + r * squareWidth
             if (r + c) % 2 == 0:
                 #drawRectangle(x, y, squareWidth, squareWidth, "black", False)
-                drawCell(rows, cols, r, c, "white")
+                drawCell(rows, cols, c, r, "white")
             else:
                 #drawRectangle(x, y, squareWidth, squareWidth, "black", True)
-                drawCell(rows, cols, r, c, "black")
+                drawCell(rows, cols, c, r, "black")
                 
 def drawCircle(x, y, r, innerColor, fill, borderColor):
     t = turtle.Turtle()
@@ -143,8 +140,8 @@ def drawCircle(x, y, r, innerColor, fill, borderColor):
 
 # Draw a single piece
 # Note: Rows and cols are the grid dimensions, not the board dimensions
-def drawPiece(rows, cols, r, c, color, king):
-    #print("DrawPiece() %d, %d, %d, %d" % (rows, cols, r, c))
+def drawPiece(cols, rows, c, r, color, king):
+    #print("DrawPiece() %d, %d, %d, %d" % (cols, rows, c, r))
     
     squareWidth = 60
     startX = 0 - (cols * squareWidth) / 2
@@ -176,7 +173,7 @@ def moves(b, c):
     for row in range(rows):
         for col in range(cols):
             piece = b[row][col]
-            #print("Colour: %d - Piece: %s - (%d, %d)" % (c, piece, row, col))
+            #print("Colour: %d - Piece: %s - (%d, %d)" % (c, piece, col, row))
 
             # Found a white piece
             if c == -1 and (piece == -1 or piece == -2):
@@ -305,22 +302,22 @@ def move(b, m):
     # Redraw new moves
     # Needs to be converted from half to full column width
     if m[1] % 2 == 0:
-        drawCell(rows, gridCols, m[1], m[0] * 2, "white")
+        drawCell(gridCols, rows, m[0] * 2, m[1], "white")
     else :
-        drawCell(rows, gridCols, m[1], m[0] * 2 + 1, "white")
+        drawCell(gridCols, rows, m[0] * 2 + 1, m[1], "white")
 
     # Redraw captured cell
     if isCapture and captureCoord[1] % 2 == 0:
-        drawCell(rows, gridCols, captureCoord[1], captureCoord[0] * 2, "white")
+        drawCell(gridCols, rows, captureCoord[0] * 2, captureCoord[1], "white")
     elif isCapture:
-        drawCell(rows, gridCols, captureCoord[1], captureCoord[0] * 2 + 1, "white")
+        drawCell(gridCols, rows, captureCoord[0] * 2 + 1, captureCoord[1], "white")
 
     if m[3] % 2 == 0:
         #print("Drawing piece - %s, %r" % (color, king))
-        drawPiece(rows, gridCols, m[3], m[2] * 2, color, king)
+        drawPiece(gridCols, rows, m[2] * 2, m[3], color, king)
     else:
         #print("Drawing piece - %s, %r" % (color, king))
-        drawPiece(rows, gridCols, m[3], m[2] * 2 + 1, color, king)
+        drawPiece(gridCols, rows, m[2] * 2 + 1, m[3], color, king)
 
     return b
 
@@ -353,7 +350,7 @@ def moveNoDraw(b, m):
     if isCapture:
         b[captureCoord[1]][captureCoord[0]] = 0
 
-    return b  
+    return b
 
 def captures(b, c):
     rows = len(b)
@@ -488,7 +485,7 @@ def recursiveCaptures(b, c):
     
     for capture in captures(b, c):
         clonedBoard = copy.deepcopy(b)
-        clonedBoard = captureNoDraw(clonedBoard, capture)
+        clonedBoard = moveNoDraw(clonedBoard, capture)
         # print(capture)
         captureData = capturePath(clonedBoard, c, [capture], captureData)
     return captureData
@@ -502,7 +499,7 @@ def capturePath(b, c, path, captureData):
             clonepath = copy.deepcopy(path)
             clonepath.append(capture)
             cloneBoard = copy.deepcopy(b)
-            captureNoDraw(cloneBoard, capture)
+            moveNoDraw(cloneBoard, capture)
             captureData = capturePath(cloneBoard, c, clonepath, captureData)
 
     if count == 0:
@@ -515,29 +512,6 @@ def capture(b, ms):
     if len(ms) > 0:
         for m in ms:
             b = move(b, m)
-
-    return b
-
-def captureNoDraw(b, ms):
-    rows = len(b)
-    cols = len(b[0])
-    gridCols = cols * 2
-
-    #print("Capture(): %s" % (ms,))
-
-    # Set moving pieces type
-    cellValue = b[ms[1]][ms[0]]
-    if cellValue == -1 or cellValue == -2:
-        if ms[5] == 0 or cellValue == -2:
-            b[ms[1]][ms[0]] = -2
-    else:
-        if ms[5] == rows - 1 or cellValue == 2:
-            b[ms[1]][ms[0]] = 2
-
-    # Update board
-    b[ms[5]][ms[4]] = b[ms[1]][ms[0]]
-    b[ms[3]][ms[2]] = 0    
-    b[ms[1]][ms[0]] = 0
 
     return b
 
@@ -589,8 +563,14 @@ def isGameOver(b):
         else:
             # Move can be made, no victor
             return (False, 0)
-                                 
-def main():    
+                   
+def main():
+    autoGame = input("Do you want an automatic game? (y/n): ")
+    if autoGame == 'y' or autoGame == 'Y':
+        autoGame = True
+    else:
+        autoGame = False
+    
     b = initialiseBoard()
     drawBoard(b)
 
@@ -598,16 +578,13 @@ def main():
     currentPlayer = 1
     gameOverState = isGameOver(b)
     while not gameOverState[0]:
-        if currentPlayer == 1:
-            print("Player black to move")
-        else:
-            print("Player white to move")
+        #if currentPlayer == 1:
+        #    print("Player black to move")
+        #else:
+        #    print("Player white to move")
         
         # Get captures and moves and make one if available
-        #captureMoves = captures(b, currentPlayer)
         captureMoves = recursiveCaptures(b, currentPlayer)
-        #print("CaptureMoves")
-        #print(captureMoves)
         moveMoves = moves(b, currentPlayer)
         
         if captureMoves != None and len(captureMoves) > 0:
@@ -624,7 +601,8 @@ def main():
         gameOverState = isGameOver(b)
 
         # Manual continue for each move made
-        # input("Press enter to continue...")        
+        if not autoGame:
+            input("Press enter to continue...")        
 
     if gameOverState[1] == 1:
         print("Player black wins!")
