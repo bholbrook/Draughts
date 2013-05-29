@@ -152,14 +152,21 @@ def drawScore(b, color):
                 nPieces += 1
             elif piece == color*2:
                 nKings += 1
-                
-    y = (-color*(rows + 1)*cellWidth)/2
+    
+    x = (-((cols - 1)*cellWidth)/2)            
+    y = (-color*(rows + 1)*cellWidth)/2-10
 
-    t.setposition(0, y)
+    t.setposition(x, y)
     t.pendown()
-    drawRectangle(0, y, 4*cellWidth, 25, "white", "white", "white")
+    drawRectangle(x, y, 4*cellWidth, 25, "white", "white", "white")
 
-    t.write("Kings: " + str(nKings) +  ", Pieces:" + str(nPieces), font=("Arial", 20, "normal"));
+    colorString = ""
+    if color == 1:
+        colorString = "Black"
+    else:
+        colorString = "White"
+
+    t.write(colorString + " - " + "Pieces: " + str(nPieces) +", Kings: " + str(nKings), font=("Arial", 16, "normal"));
 
 
 def drawBoard(b):
@@ -254,12 +261,9 @@ def move(b, m):
     else:
         #print("Drawing piece - %s, %r" % (color, king))
         drawPiece(gridCols, rows, m[2] * 2 + 1, m[3], color, king)
-
-    if isCapture:
-        if color == "black":
-            drawScore(b, -1) #this is the opposite color, so that the number of pieces for the other player is decreased
-        elif color == "white":
-            drawScore(b, 1)
+    
+    drawScore(b, -1) 
+    drawScore(b, 1)
 
     return b
 
