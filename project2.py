@@ -29,6 +29,108 @@ def initialiseBoard():
     except IOError:
         return defaultBoard
 
+def drawRectangle(x, y, w, h, innerColor, fill, borderColor):
+    t = turtle.Turtle()
+    t.speed(0)
+    t.hideturtle()
+    t.color(borderColor)
+    t.fillcolor(innerColor)
+
+    # Move to x, y cord
+    t.penup()
+    t.setposition(x, y)
+    t.pendown()
+    t.left(90)
+
+    # Draw square
+    if fill:
+        t.begin_fill()
+    
+    for i in range(2):        
+        t.forward(h)
+        t.right(90)
+        t.forward(w)
+        t.right(90)
+        
+    t.end_fill()
+
+def drawCircle(x, y, r, innerColor, fill, borderColor):
+    t = turtle.Turtle()
+    t.speed(0)
+    t.hideturtle()
+    t.color(borderColor)
+    t.fillcolor(innerColor)
+
+    # Move to x, y cord
+    t.penup()
+    t.setposition(x, y)
+    t.pendown()
+
+    if fill:
+        t.begin_fill()
+
+    t.circle(r)
+    
+    t.end_fill()
+
+# Draw a single cell
+# Note: Rows and cols are the grid dimensions, not the board dimensions
+def drawCell(rows, cols, c, r, color):
+    #print("DrawCell() %d, %d, %d, %d" % (cols, rows, c, r))
+    
+    squareWidth = 60
+    startX = 0 - (cols * squareWidth) / 2
+    startY = 0 - (rows * squareWidth) / 2
+
+    x = startX + c * squareWidth
+    y = startY + r * squareWidth
+
+    drawRectangle(x, y, squareWidth, squareWidth, color, True, "black")
+
+# Draws the checkerboard grid
+# Note: Rows and cols are the grid dimensions, not the board dimensions
+def drawGrid(cols, rows):
+    #print("DrawGrid() %d, %d" % (rows, cols))
+    
+    squareWidth = 60
+    startX = 0 - (cols * squareWidth) / 2
+    startY = 0 - (rows * squareWidth) / 2
+    boardHeight = rows * squareWidth
+    boardWidth = cols * squareWidth
+
+    drawRectangle(startX, startY, boardWidth, boardHeight, "white", False, "black")
+    
+    for r in range(rows):
+        for c in range(cols):
+            if (r + c) % 2 != 0:
+                drawCell(rows, cols, c, r, "black")
+                
+# Draw a single piece
+# Note: Rows and cols are the grid dimensions, not the board dimensions
+def drawPiece(cols, rows, c, r, color, king):
+    #print("DrawPiece() %d, %d, %d, %d" % (cols, rows, c, r))
+    
+    squareWidth = 60
+    startX = 0 - (cols * squareWidth) / 2
+    startY = 0 - (rows * squareWidth) / 2
+    
+    radius = 20
+    innerRadius = 10
+    innerColor = "red"
+
+    x = startX + c * squareWidth + squareWidth / 2
+    y = startY + r * squareWidth + radius / 2
+    
+    #print("DrawPiece() drawing: x: %d, y: %d" % (x, y))
+    
+    if color == "white":
+        drawCircle(x, y, radius, "white", True, "black")
+    else:
+        drawCircle(x, y, radius, "black", True, "black")
+
+    if king:
+        drawCircle(x, y + radius / 2, innerRadius, innerColor, True, innerColor)
+
 def drawBoard(b):
     rows = len(b)
     cols = len(b[0])
@@ -58,111 +160,6 @@ def drawBoard(b):
                 continue
             else:
                 raise SystemExit("Invalid piece value")
-                
-
-def drawRectangle(x, y, w, h, innerColor, fill, borderColor):
-    t = turtle.Turtle()
-    t.speed(0)
-    t.hideturtle()
-    t.color(borderColor)
-    t.fillcolor(innerColor)
-
-    # Move to x, y cord
-    t.penup()
-    t.setposition(x, y)
-    t.pendown()
-    t.left(90)
-
-    # Draw square
-    if fill:
-        t.begin_fill()
-    
-    for i in range(2):        
-        t.forward(h)
-        t.right(90)
-        t.forward(w)
-        t.right(90)
-        
-    t.end_fill()
-
-# Draw a single cell
-# Note: Rows and cols are the grid dimensions, not the board dimensions
-def drawCell(rows, cols, c, r, color):
-    #print("DrawCell() %d, %d, %d, %d" % (cols, rows, c, r))
-    
-    squareWidth = 60
-    startX = 0 - (cols * squareWidth) / 2
-    startY = 0 - (rows * squareWidth) / 2
-
-    x = startX + c * squareWidth
-    y = startY + r * squareWidth
-
-    drawRectangle(x, y, squareWidth, squareWidth, color, True, "black")
-
-# Draws the checkerboard grid
-# Note: Rows and cols are the grid dimensions, not the board dimensions
-def drawGrid(cols, rows):
-    #print("DrawGrid() %d, %d" % (rows, cols))
-    
-    squareWidth = 60
-    startX = 0 - (cols * squareWidth) / 2
-    startY = 0 - (rows * squareWidth) / 2
-    
-    for r in range(rows):
-        for c in range(cols):
-            x = startX + c * squareWidth
-            y = startY + r * squareWidth
-            if (r + c) % 2 == 0:
-                #drawRectangle(x, y, squareWidth, squareWidth, "black", False)
-                drawCell(rows, cols, c, r, "white")
-            else:
-                #drawRectangle(x, y, squareWidth, squareWidth, "black", True)
-                drawCell(rows, cols, c, r, "black")
-                
-def drawCircle(x, y, r, innerColor, fill, borderColor):
-    t = turtle.Turtle()
-    t.speed(0)
-    t.hideturtle()
-    t.color(borderColor)
-    t.fillcolor(innerColor)
-
-    # Move to x, y cord
-    t.penup()
-    t.setposition(x, y)
-    t.pendown()
-
-    if fill:
-        t.begin_fill()
-
-    t.circle(r)
-    
-    t.end_fill()
-
-# Draw a single piece
-# Note: Rows and cols are the grid dimensions, not the board dimensions
-def drawPiece(cols, rows, c, r, color, king):
-    #print("DrawPiece() %d, %d, %d, %d" % (cols, rows, c, r))
-    
-    squareWidth = 60
-    startX = 0 - (cols * squareWidth) / 2
-    startY = 0 - (rows * squareWidth) / 2
-    
-    radius = 20
-    innerRadius = 10
-    innerColor = "red"
-
-    x = startX + c * squareWidth + squareWidth / 2
-    y = startY + r * squareWidth + radius / 2
-    
-    #print("DrawPiece() drawing: x: %d, y: %d" % (x, y))
-    
-    if color == "white":
-        drawCircle(x, y, radius, "white", True, "black")
-    else:
-        drawCircle(x, y, radius, "black", True, "black")
-
-    if king:
-        drawCircle(x, y + radius / 2, innerRadius, innerColor, True, innerColor)
 
 def moves(b, c):
     rows = len(b)
@@ -175,88 +172,22 @@ def moves(b, c):
             piece = b[row][col]
             #print("Colour: %d - Piece: %s - (%d, %d)" % (c, piece, col, row))
 
-            # Found a white piece
-            if c == -1 and (piece == -1 or piece == -2):
-               # print("White piece at (%d, %d)" % (col, row))
-                # Height boundary check
-                if row - 1 >= 0:
-                    #Check board row shift
-                    if row % 2 == 0:
-                        # Left move position check
-                        if col - 1 >= 0 and b[row-1][col-1] == 0:
-                            moves.append((col, row, col-1, row-1))
-                        # Right move position check
-                        if col < cols and b[row-1][col] == 0:
-                            moves.append((col, row, col, row-1))
-                    else:
-                        # Left move position check
-                        #print("Col: %d, Row: %d, b[][]: %d, newb[][]: %d" % (col, row, b[row][col], b[row-1][col]))
-                        if col >= 0 and b[row-1][col] == 0:
-                            moves.append((col, row, col, row-1))
-                        # Right move position check
-                        if col + 1 < cols and b[row-1][col+1] == 0:
-                            moves.append((col, row, col+1, row-1))
-    
-                # King piece. Check moves below current position
-                if piece == -2:
-                    # Height boundary check
-                    if row + 1 < rows:
-                        #Check board row shift
-                        if row % 2 == 0:
-                            # Left move position check
-                            if col - 1 >= 0 and b[row+1][col-1] == 0:
-                                moves.append((col, row, col-1, row+1))
-                            # Right move position check
-                            if col < cols and b[row+1][col] == 0:
-                                moves.append((col, row, col, row+1))
-                        else:
-                            # Left move position check
-                            if col >= 0 and b[row+1][col] == 0:
-                                moves.append((col, row, col, row+1))
-                            # Right move position check
-                            if col + 1 < cols and b[row+1][col+1] == 0:
-                                moves.append((col, row, col+1, row+1))
-
-            # Found a black piece
-            if c == 1 and (piece == 1 or piece == 2):
-                #print("Black piece at (%d, %d)" % (col, row))
-                # Height boundary check
-                if row + 1 < rows:
-                    #Check board row shift
-                    if row % 2 == 0:
-                        # Left move position check
-                        if col - 1 >= 0 and b[row+1][col-1] == 0:
-                            moves.append((col, row, col-1, row+1))
-                        # Right move position check
-                        if col < cols and b[row+1][col] == 0:
-                            moves.append((col, row, col, row+1))
-                    else:
-                        # Left move position check
-                        if col >= 0 and b[row+1][col] == 0:
-                            moves.append((col, row, col, row+1))
-                        # Right move position check
-                        if col + 1 < cols and b[row+1][col+1] == 0:
-                            moves.append((col, row, col+1, row+1))
-
-                # King piece. Check moves below current position
-                if piece == 2:
-                    # Height boundary check
-                    if row - 1 >= 0:
-                        #Check board row shift
-                        if row % 2 == 0:
-                            # Left move position check
-                            if col - 1 >= 0 and b[row-1][col-1] == 0:
-                                moves.append((col, row, col-1, row-1))
-                            # Right move position check
-                            if col < cols and b[row-1][col] == 0:
-                                moves.append((col, row, col, row-1))
-                        else:
-                            # Left move position check
-                            if col >= 0 and b[row-1][col] == 0:
-                                moves.append((col, row, col, row-1))
-                            # Right move position check
-                            if col + 1 < cols and b[row-1][col+1] == 0:
-                                moves.append((col, row, col+1, row-1))
+            # Check for up positions
+            if ((c == 1 and (piece == 1 or piece == 2)) or (c == -1 and piece == -2)) and row + 1 < rows:
+                if row % 2 == 0 and col - 1 >= 0 and b[row + 1][col - 1] == 0:
+                    moves.append((col, row, col - 1, row + 1))
+                elif row % 2 and col + 1 < cols and b[row + 1][col + 1] == 0:
+                    moves.append((col, row, col + 1, row + 1))
+                elif b[row + 1][col] == 0:
+                    moves.append((col, row, col, row + 1))
+            # Check for down positions
+            elif ((c == -1 and (piece == -1 or piece == -2)) or (c == 1 and piece == 2)) and row - 1 >= 0:
+                if row % 2 == 0 and col - 1 >= 0 and b[row - 1][col - 1] == 0:
+                    moves.append((col, row, col - 1, row - 1))
+                elif row % 2 and col + 1 < cols and b[row - 1][col + 1] == 0:
+                    moves.append((col, row, col + 1, row - 1))
+                elif b[row - 1][col] == 0:
+                    moves.append((col, row, col, row - 1))
                                 
     return moves
 
@@ -273,7 +204,6 @@ def move(b, m):
         m = (m[0], m[1], m[4], m[5])
 
     print("Move(): %s, Capture: %r" % (m, isCapture))
-    print("R: %d, C: %d" % (rows, cols))
 
     # Set moving pieces type
     cellValue = b[m[1]][m[0]]
@@ -480,14 +410,13 @@ def captures(b, c):
                                 
     return captures
 
-# Need to confirm on multiple situations
+# Generate all possible sequences of captures
 def recursiveCaptures(b, c):
     captureData = []
     
     for capture in captures(b, c):
         clonedBoard = copy.deepcopy(b)
         clonedBoard = moveNoDraw(clonedBoard, capture)
-        # print(capture)
         captureData = capturePath(clonedBoard, c, [capture], captureData)
     return captureData
 
@@ -508,82 +437,29 @@ def capturePath(b, c, path, captureData):
 
     return captureData
 
-# Takes a list of moves and makes each of them
+# Takes a list of moves and plays them
 def capture(b, ms):
     if len(ms) > 0:
         for m in ms:
             b = move(b, m)
 
     return b
-
-# Given a board state returns if a player has won and which colour
-# Black: 1, White, -1, No victor: 0
-# Return ex. (True, 1): Black victory
-def isGameOver(b):
-    rows = len(b)
-    cols = len(b[0])
-
-    numBlackPieces = 0
-    numWhitePieces = 0
-    for r in range(rows):
-        for c in range(cols):
-            piece = b[r][c]
-            if piece == -1 or piece == -2:
-                numWhitePieces += 1
-            elif piece == 1 or piece == 2:
-                numBlackPieces += 1
-
-    # Check number of pieces on board
-    if numBlackPieces == 0 and numWhitePieces == 0:
-        # No pieces left, no victor
-        return (True, 0)
-    elif numBlackPieces == 0:
-        # No black pieces left, white victory
-        return (True, -1)
-    elif numWhitePieces == 0:
-        # No white pieces left, black victory
-        return (True, 1)
-    else:
-        # Both players have pieces
-        whiteMoves = moves(b, -1)
-        blackMoves = moves(b, 1)
-        whiteCaptures = captures(b, -1)
-        blackCaptures = captures(b, 1)
-        numWhiteMoves = len(whiteMoves) + len(whiteCaptures)
-        numBlackMoves = len(blackMoves) + len(blackCaptures)
-
-        if numWhiteMoves == 0 and numBlackMoves == 0:
-            # No more available moves, no victor
-            return (True, 0)
-        elif numWhiteMoves == 0:
-            # No available white moves, black victory
-            return (True, 1)
-        elif numBlackMoves == 0:
-            # No available black moves, white victory
-            return (True, -1)
-        else:
-            # Move can be made, no victor
-            return (False, 0)
                    
 def main():
-    manualGame = input("Do you want a manual game? (y/n): ")
-    if manualGame == 'y' or manualGame == 'Y':
-        manualGame = True
-    else:
-        manualGame = False
+    # Set to True to enable a manual playthrough of moves
+    ENABLE_MANUAL = True
     
     b = initialiseBoard()
     drawBoard(b)
 
     # Black player starts first
     currentPlayer = 1
-    gameOverState = isGameOver(b)
-    while not gameOverState[0]:
-        #if currentPlayer == 1:
-        #    print("Player black to move")
-        #else:
-        #    print("Player white to move")
-        
+
+    while True:
+        # Manual continue required for each move made
+        if ENABLE_MANUAL:
+            input("Press enter to continue...")
+
         # Get captures and moves and make one if available
         captureMoves = recursiveCaptures(b, currentPlayer)
         moveMoves = moves(b, currentPlayer)
@@ -592,22 +468,17 @@ def main():
             m = random.choice(captureMoves)
             capture(b, m)
         elif len(moveMoves) > 0:
-            #moveNoDraw(b, random.choice(moveMoves))
             move(b, random.choice(moveMoves))
+        else:
+            break
             
         # Switch player
         currentPlayer *= -1
 
-        # Update game over state
-        gameOverState = isGameOver(b)
-
-        # Manual continue required for each move made
-        if manualGame:
-            input("Press enter to continue...")        
-
-    if gameOverState[1] == 1:
-        print("Player black wins!")
-    else:
+    if currentPlayer == 1:
         print("Player white wins!")
+    else:
+        print("Player black wins!")
 
+# TODO Remove this on submission
 main()
