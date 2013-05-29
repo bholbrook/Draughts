@@ -173,6 +173,7 @@ def drawBoard(b):
     drawScore(b, -1)
 
     #print("Drawing pieces")
+
     #print("DrawBoard() %d, %d" % (cols, rows))
     
     for r in range(rows):
@@ -302,7 +303,7 @@ def moves(b, c):
     for row in range(rows):
         for col in range(cols):
             piece = b[row][col]
-            #print("Colour: %d - Piece: %s - (%d, %d)" % (c, piece, col, row))
+            print("Colour: %d - Piece: %s - (%d, %d)" % (c, piece, col, row))
 
             # Check for up positions
             if ((c == 1 and (piece == 1 or piece == 2)) or (c == -1 and piece == -2)) and row + 1 < rows:
@@ -333,7 +334,6 @@ def captures(b, c):
         for col in range(cols):
             piece = b[row][col]
             #print("Colour: %d - Piece: %s - (%d, %d)" % (c, piece, col, row))
-
 
             # Check for up positions
             if ((c == 1 and (piece == 1 or piece == 2)) or (c == -1 and piece == -2)) and row + 2 < rows:
