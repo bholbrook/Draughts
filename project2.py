@@ -203,7 +203,7 @@ def drawBoard(b):
                 raise SystemExit("Invalid piece value")
 
 # Makes a move or a capture and redraws the board
-def move(b, m):
+def move(b, m, draw = True):
     rows = len(b)
     cols = len(b[0])
     gridCols = cols * 2
@@ -243,57 +243,27 @@ def move(b, m):
 
     # Redraw new moves
     # Needs to be converted from half to full column width
-    if m[1] % 2 == 0:
-        drawCell(gridCols, rows, m[0] * 2, m[1], "white")
-    else :
-        drawCell(gridCols, rows, m[0] * 2 + 1, m[1], "white")
+    if draw:
+        if m[1] % 2 == 0:
+            drawCell(gridCols, rows, m[0] * 2, m[1], "white")
+        else :
+            drawCell(gridCols, rows, m[0] * 2 + 1, m[1], "white")
 
-    # Redraw captured cell
-    if isCapture and captureCoord[1] % 2 == 0:
-        drawCell(gridCols, rows, captureCoord[0] * 2, captureCoord[1], "white")
-    elif isCapture:
-        drawCell(gridCols, rows, captureCoord[0] * 2 + 1, captureCoord[1], "white")
+        # Redraw captured cell
+        if isCapture and captureCoord[1] % 2 == 0:
+            drawCell(gridCols, rows, captureCoord[0] * 2, captureCoord[1], "white")
+        elif isCapture:
+            drawCell(gridCols, rows, captureCoord[0] * 2 + 1, captureCoord[1], "white")
 
-    if m[3] % 2 == 0:
-        #print("Drawing piece - %s, %r" % (color, king))
-        drawPiece(gridCols, rows, m[2] * 2, m[3], color, king)
-    else:
-        #print("Drawing piece - %s, %r" % (color, king))
-        drawPiece(gridCols, rows, m[2] * 2 + 1, m[3], color, king)
+        if m[3] % 2 == 0:
+            #print("Drawing piece - %s, %r" % (color, king))
+            drawPiece(gridCols, rows, m[2] * 2, m[3], color, king)
+        else:
+            #print("Drawing piece - %s, %r" % (color, king))
+            drawPiece(gridCols, rows, m[2] * 2 + 1, m[3], color, king)
     
     drawScore(b, -1) 
     drawScore(b, 1)
-
-    return b
-
-# Makes a move or a capture without redrawing the board
-def moveNoDraw(b, m):
-    rows = len(b)
-    cols = len(b[0])
-    gridCols = cols * 2
-
-    isCapture = False
-    if len(m) == 6:
-        isCapture = True
-        captureCoord = (m[2], m[3])
-        m = (m[0], m[1], m[4], m[5])
-
-    #print("Move(): %s, Capture: %r" % ((m,), isCapture))
-
-    # Set moving pieces type
-    cellValue = b[m[1]][m[0]]
-    if cellValue == -1 or cellValue == -2:
-        if m[3] == 0 or cellValue == -2:
-            b[m[1]][m[0]] = -2
-    else:
-        if m[3] == rows - 1 or cellValue == 2:
-            b[m[1]][m[0]] = 2
-
-    # Update board
-    b[m[3]][m[2]] = b[m[1]][m[0]]
-    b[m[1]][m[0]] = 0
-    if isCapture:
-        b[captureCoord[1]][captureCoord[0]] = 0
 
     return b
 
@@ -390,7 +360,7 @@ def recursiveCaptures(b, c):
     
     for capture in captures(b, c):
         clonedBoard = copy.deepcopy(b)
-        clonedBoard = moveNoDraw(clonedBoard, capture)
+        clonedBoard = move(clonedBoard, capture, False)
         captureData = capturePath(clonedBoard, c, [capture], captureData)
     return captureData
 
@@ -403,7 +373,7 @@ def capturePath(b, c, path, captureData):
             clonepath = copy.deepcopy(path)
             clonepath.append(capture)
             cloneBoard = copy.deepcopy(b)
-            moveNoDraw(cloneBoard, capture)
+            move(cloneBoard, capture, False)
             captureData = capturePath(cloneBoard, c, clonepath, captureData)
 
     if count == 0:
