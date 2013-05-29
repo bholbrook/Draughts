@@ -178,9 +178,6 @@ def drawBoard(b):
     
     drawGrid(gridCols, rows)
 
-    drawScore(b, 1)
-    drawScore(b, -1)
-
     #print("Drawing pieces")
 
     #print("DrawBoard() %d, %d" % (cols, rows))
@@ -264,9 +261,6 @@ def move(b, m, draw = True):
         else:
             #print("Drawing piece - %s, %r" % (color, king))
             drawPiece(gridCols, rows, m[2] * 2 + 1, m[3], color, king)
-    
-    drawScore(b, -1) 
-    drawScore(b, 1)
 
     return b
 
@@ -395,14 +389,21 @@ def capture(b, ms):
 def main():
     # Set to True to enable a manual playthrough of moves
     ENABLE_MANUAL = True
+    # Set to True to enable displaying of player scores
+    ENABLE_SCORES = True
     
     b = initialiseBoard()
     drawBoard(b)
+
 
     # Black player starts first
     currentPlayer = 1
 
     while True:
+        if ENABLE_SCORES:
+            drawScore(b, -1) 
+            drawScore(b, 1)
+
         # Manual continue required for each move made
         if ENABLE_MANUAL:
             input("Press enter to continue...")
