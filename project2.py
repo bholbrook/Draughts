@@ -214,7 +214,8 @@ def move(b, m, draw = True):
         captureCoord = (m[2], m[3])
         m = (m[0], m[1], m[4], m[5])
 
-    print("Move(): %s, Capture: %r" % (m, isCapture))
+    if draw:
+        print("Move(): %s, Capture: %r" % (m, isCapture))
 
     # Set moving pieces type
     cellValue = b[m[1]][m[0]]
