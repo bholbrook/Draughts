@@ -131,12 +131,17 @@ def drawPiece(cols, rows, c, r, color, king):
     if king:
         drawCircle(x, y + radius / 2, innerRadius, innerColor, True, innerColor)
 
-def drawScore(b, color):
+def drawString(x, y, string):
     t = turtle.Turtle()
     t.speed(0)
     t.hideturtle()
     t.penup()
+    t.setposition(x, y)
+    t.pendown()
+    t.write(string, font=("Arial", 16, "normal"));
 
+
+def drawScore(b, color):
     cellWidth = 60
 
     rows = len(b)
@@ -156,9 +161,7 @@ def drawScore(b, color):
     x = (-((cols - 1) * cellWidth) / 2)            
     y = (-color * (rows + 1) * cellWidth) / 2 - 10
 
-    t.setposition(x, y)
-    t.pendown()
-    drawRectangle(x, y, 4 * cellWidth, 25, "white", "white", "white")
+    drawRectangle(x, y, 5 * cellWidth, 25, "white", "white", "white")
 
     colorString = ""
     if color == 1:
@@ -166,7 +169,7 @@ def drawScore(b, color):
     else:
         colorString = "White"
 
-    t.write(colorString + " - " + "Pieces: " + str(nPieces) + ", Kings: " + str(nKings), font=("Arial", 16, "normal"));
+    drawString(x, y, colorString + " - " + "Pieces: " + str(nPieces) + ", Kings: " + str(nKings))
 
 def drawBoard(b):
     rows = len(b)
@@ -415,7 +418,6 @@ def capturePath(b, c, path, captureData):
 def capture(b, ms):
     if len(ms) > 0:
         for m in ms:
-            print("Test")
             b = move(b, m)
 
     return b
