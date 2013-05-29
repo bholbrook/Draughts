@@ -2,6 +2,18 @@
 # Benjamin Holbrook, 20761758
 # George Gooden, 20772597
 
+# - - - - - - - - - - - - - - README - - - - - - - - - - - - - -
+# By default we have setup our script so it automatically plays a full game and
+# outputs the moves and winner to the console.
+#
+# We have included two toggle switches to modify the behaviour of a playthough:
+# ENABLE_MANUAL:
+# Set to True to set the script to pause between each move and to require input to continue.
+# 
+# ENABLE_SCORES:
+# Set to True to toggle the scoreboard display
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 import turtle
 import random
 import copy
@@ -387,13 +399,12 @@ def capture(b, ms):
                    
 def main():
     # Set to True to enable a manual playthrough of moves
-    ENABLE_MANUAL = True
+    ENABLE_MANUAL = False
     # Set to True to enable displaying of player scores
-    ENABLE_SCORES = True
+    ENABLE_SCORES = False
     
     b = initialiseBoard()
     drawBoard(b)
-
 
     # Black player starts first
     currentPlayer = 1
@@ -426,6 +437,3 @@ def main():
         print("Player white wins!")
     else:
         print("Player black wins!")
-
-# TODO Remove this on submission
-main()
