@@ -175,17 +175,23 @@ def move(b, m):
     print("Move(): %s, Capture: %r" % (m, isCapture))
 
     # Set moving pieces type
-    piece = b[m[1]][m[0]]
-    if piece == 1 or piece == 2:
-        color = "black"
-    else:
-         color = "white"
+    cellValue = b[m[1]][m[0]]
+    if cellValue == -1 or cellValue == -2:
+        color = "white"
 
-    if piece == 2 or piece == -2 or (piece == 1 and m[3] == rows - 1) or (piece == -1 and m[3] == 0):
-        king = True
-        b[m[1]][m[0]] *= 2
+        if m[3] == 0 or cellValue == -2:
+            king = True
+            b[m[1]][m[0]] = -2
+        else:
+            king = False
     else:
-        king = False    
+        color = "black"
+
+        if m[3] == rows - 1 or cellValue == 2:
+            king = True
+            b[m[1]][m[0]] = 2
+        else:
+            king = False
 
     # Update board
     b[m[3]][m[2]] = b[m[1]][m[0]]
@@ -207,11 +213,11 @@ def move(b, m):
         drawCell(gridCols, rows, captureCoord[0] * 2 + 1, captureCoord[1], "white")
 
     if m[3] % 2 == 0:
+        #print("Drawing piece - %s, %r" % (color, king))
         drawPiece(gridCols, rows, m[2] * 2, m[3], color, king)
     else:
+        #print("Drawing piece - %s, %r" % (color, king))
         drawPiece(gridCols, rows, m[2] * 2 + 1, m[3], color, king)
-
-
 
     return b
 
@@ -255,7 +261,7 @@ def moves(b, c):
     for row in range(rows):
         for col in range(cols):
             piece = b[row][col]
-            #print("Colour: %d - Piece: %s - (%d, %d)" % (c, piece, col, row))
+            print("Colour: %d - Piece: %s - (%d, %d)" % (c, piece, col, row))
 
             # Check for up positions
             if ((c == 1 and (piece == 1 or piece == 2)) or (c == -1 and piece == -2)) and row + 1 < rows:
