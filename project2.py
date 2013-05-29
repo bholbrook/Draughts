@@ -148,17 +148,17 @@ def drawScore(b, color):
     for r in range(rows):
         for c in range(cols):
             piece = b[r][c]
-            if piece == color*1:
+            if piece == color:
                 nPieces += 1
-            elif piece == color*2:
+            elif piece == color * 2:
                 nKings += 1
     
-    x = (-((cols - 1)*cellWidth)/2)            
-    y = (-color*(rows + 1)*cellWidth)/2-10
+    x = (-((cols - 1) * cellWidth) / 2)            
+    y = (-color * (rows + 1) * cellWidth) / 2 - 10
 
     t.setposition(x, y)
     t.pendown()
-    drawRectangle(x, y, 4*cellWidth, 25, "white", "white", "white")
+    drawRectangle(x, y, 4 * cellWidth, 25, "white", "white", "white")
 
     colorString = ""
     if color == 1:
@@ -166,8 +166,7 @@ def drawScore(b, color):
     else:
         colorString = "White"
 
-    t.write(colorString + " - " + "Pieces: " + str(nPieces) +", Kings: " + str(nKings), font=("Arial", 16, "normal"));
-
+    t.write(colorString + " - " + "Pieces: " + str(nPieces) + ", Kings: " + str(nKings), font=("Arial", 16, "normal"));
 
 def drawBoard(b):
     rows = len(b)
@@ -307,7 +306,7 @@ def moves(b, c):
     for row in range(rows):
         for col in range(cols):
             piece = b[row][col]
-            print("Colour: %d - Piece: %s - (%d, %d)" % (c, piece, col, row))
+            #print("Colour: %d - Piece: %s - (%d, %d)" % (c, piece, col, row))
 
             # Check for up positions
             if ((c == 1 and (piece == 1 or piece == 2)) or (c == -1 and piece == -2)) and row + 1 < rows:
