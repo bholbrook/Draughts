@@ -131,12 +131,46 @@ def drawPiece(cols, rows, c, r, color, king):
     if king:
         drawCircle(x, y + radius / 2, innerRadius, innerColor, True, innerColor)
 
+def drawScore(b, color):
+    t = turtle.Turtle()
+    t.speed(0)
+    t.hideturtle()
+    t.penup()
+
+    cellWidth = 60
+
+    rows = len(b)
+    cols = len(b[0])
+
+    nKings = 0;
+    nPieces = 0;
+
+    for r in range(rows):
+        for c in range(cols):
+            piece = b[r][c]
+            if piece == color*1:
+                nPieces += 1
+            elif piece == color*2:
+                nKings += 1
+                
+    y = (-color*(rows + 1)*cellWidth)/2
+
+    t.setposition(0, y)
+    t.pendown()
+    drawRectangle(0, y, 4*cellWidth, 25, "white", "white", "white")
+
+    t.write("Kings: " + str(nKings) +  ", Pieces:" + str(nPieces), font=("Arial", 20, "normal"));
+
+
 def drawBoard(b):
     rows = len(b)
     cols = len(b[0])
     gridCols = cols * 2
     
     drawGrid(gridCols, rows)
+
+    drawScore(b, 1)
+    drawScore(b, -1)
 
     #print("Drawing pieces")
     #print("DrawBoard() %d, %d" % (cols, rows))
@@ -219,6 +253,12 @@ def move(b, m):
     else:
         #print("Drawing piece - %s, %r" % (color, king))
         drawPiece(gridCols, rows, m[2] * 2 + 1, m[3], color, king)
+
+    if isCapture:
+        if color == "black":
+            drawScore(b, -1) #this is the opposite color, so that the number of pieces for the other player is decreased
+        elif color == "white":
+            drawScore(b, 1)
 
     return b
 
@@ -372,6 +412,7 @@ def capturePath(b, c, path, captureData):
 def capture(b, ms):
     if len(ms) > 0:
         for m in ms:
+            print("Test")
             b = move(b, m)
 
     return b
