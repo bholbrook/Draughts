@@ -178,8 +178,6 @@ def drawBoard(b):
     
     drawGrid(gridCols, rows)
 
-    #print("Drawing pieces")
-
     #print("DrawBoard() %d, %d" % (cols, rows))
     
     for r in range(rows):
@@ -190,13 +188,13 @@ def drawBoard(b):
                 c += 1
 
             if piece == -2:
-                drawPiece(rows, gridCols, c, r, "white", True)
+                drawPiece(gridCols, rows, c, r, "white", True)
             elif piece == -1:
-                drawPiece(rows, gridCols, c, r, "white", False)
+                drawPiece(gridCols, rows, c, r, "white", False)
             elif piece == 1:
-                drawPiece(rows, gridCols, c, r, "black", False)
+                drawPiece(gridCols, rows, c, r, "black", False)
             elif piece == 2:
-                drawPiece(rows, gridCols, c, r, "black", True)
+                drawPiece(gridCols, rows, c, r, "black", True)
             elif piece == 0:
                 continue
             else:
